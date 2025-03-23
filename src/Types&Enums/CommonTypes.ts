@@ -1,10 +1,15 @@
-import {priority, statusEnum, role} from "./Enums";
+import {priority, role} from "./Enums";
 
 declare global{
     interface User{
         id: number;
-        name: string;
+        user_name: string;
         email: string;
+        password_hash: string;
+        bio: string;
+        profile_picture: string;
+        rating: number;
+        credits: number;
         role: role;
     }
 

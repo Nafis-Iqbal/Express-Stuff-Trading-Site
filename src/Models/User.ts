@@ -1,14 +1,17 @@
-import sequelize from "../Config/database";
-import { Model, DataTypes, Optional } from "sequelize";
+import { Model, DataTypes, Optional, Sequelize } from "sequelize";
 
 interface UserAttributes {
     id: number;
-    name: string;
+    user_name: string;
     email: string;
     email_verified_at: Date | null;
-    password: string;
-    role: string;
+    password_hash: string;
     remember_token: string | null;
+    bio: string;
+    profile_picture: string;
+    rating: number;
+    credits: number;
+    role: string;
     created_at: Date;
     updated_at: Date;
 }
@@ -17,67 +20,91 @@ interface UserCreationAttributes extends Optional<UserAttributes, "id"|"email_ve
 
 class User extends Model<UserAttributes,UserCreationAttributes> implements UserAttributes{
     id!: number;
-    name!: string;
+    user_name!: string;
     email!: string;
     email_verified_at!: Date | null;
-    password!: string;
-    role!: string;
+    password_hash!: string;
     remember_token!: string | null;
+    bio!: string;
+    profile_picture!: string;
+    rating!: number;
+    credits!: number;
+    role!: string;
     created_at!: Date;
     updated_at!: Date;
-}
 
-User.init(
+    static initModel(sequelize: Sequelize)
     {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        email: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-            email_verified_at: {
-            type: DataTypes.DATE,
-            allowNull: true,
-        },
-        password: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        role: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: "user",
-        },
-        remember_token: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-        },
-    },
-    {
-        sequelize,
-        tableName: "users",
-        timestamps: true,
-        underscored: true
+        User.init(
+            {
+                id: {
+                    type: DataTypes.INTEGER,
+                    autoIncrement: true,
+                    primaryKey: true,
+                },
+                user_name: {
+                    type: DataTypes.STRING,
+                    allowNull: false
+                },
+                email: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                    unique: true,
+                },
+                email_verified_at: {
+                    type: DataTypes.DATE,
+                    allowNull: true,
+                },
+                password_hash: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                },
+                remember_token: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                bio: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                profile_picture: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                rating: {
+                    type: DataTypes.FLOAT,
+                    allowNull: false,
+                },
+                credits: {
+                    type: DataTypes.INTEGER,
+                    allowNull: false,
+                },
+                role: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                    defaultValue: "user",
+                },
+                created_at: {
+                    type: DataTypes.DATE,
+                    allowNull: false,
+                    defaultValue: DataTypes.NOW,
+                },
+                updated_at: {
+                    type: DataTypes.DATE,
+                    allowNull: false,
+                    defaultValue: DataTypes.NOW,
+                },
+            },
+            {
+                sequelize,
+                modelName: "User",
+                tableName: "users",
+                timestamps: true,
+                underscored: true
+            }
+        );
     }
-);
+}
 
 export default User;
 

@@ -4,10 +4,9 @@ export enum role{
     admin = "admin"
 }
 
-export enum statusEnum{
-    active = "active",
-    completed = "completed",
-    paused = "paused",
+export enum listingStatus{
+    available = "available",
+    sold = "sold",
     cancelled = "cancelled"
 }
 
