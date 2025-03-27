@@ -1,5 +1,3 @@
-import { DataTypes, Sequelize } from "sequelize";
-import { config } from "dotenv";
 import sequelize from "../Config/database";
 
 import User from "./User";
@@ -65,6 +63,8 @@ Trade.belongsTo(Listing, {foreignKey: "listing_id", as: "listing"});
 
 Trade.hasOne(Transaction, {foreignKey: "trade_id", as: "trade"});
 Transaction.belongsTo(Trade, {foreignKey: "trade_id", as: "transaction"});
+
+export {sequelize, User, Listing, Bid, Trade, Tag, Rating, Transaction};
 
 
 

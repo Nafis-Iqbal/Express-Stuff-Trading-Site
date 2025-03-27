@@ -65,17 +65,17 @@ class Transaction extends Model<TransactionAttributes, TransactionCreationAttrib
                 tableName: "transactions",
                 timestamps: true,
                 underscored: true,
+                hooks: {
+                    beforeDestroy: async () => {
+                        throw new Error("Transactions cannot be deleted.");
+                    },
+                    beforeUpdate: async () => {
+                        throw new Error("Transactions cannot be updated.");
+                    }
+                }
             }
         );
     }
 }
-
-Transaction.beforeUpdate(() => {
-    throw new Error("Transactions cannot be modified.");
-});
-
-Transaction.beforeDestroy(() => {
-    throw new Error("Transactions cannot be deleted.");
-});
 
 export default Transaction;

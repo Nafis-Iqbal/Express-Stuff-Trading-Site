@@ -16,7 +16,8 @@ interface UserAttributes {
     updated_at: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"|"email_verified_at"|"remember_token"|"created_at"|"updated_at">{};
+interface UserCreationAttributes extends Optional<UserAttributes, "id"|"email_verified_at"|"remember_token"|"created_at"|
+"updated_at"|"bio"|"profile_picture"|"rating"|"credits"|"role">{};
 
 class User extends Model<UserAttributes,UserCreationAttributes> implements UserAttributes{
     id!: number;
@@ -74,10 +75,12 @@ class User extends Model<UserAttributes,UserCreationAttributes> implements UserA
                 rating: {
                     type: DataTypes.FLOAT,
                     allowNull: false,
+                    defaultValue: 0.0,
                 },
                 credits: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
+                    defaultValue: 100.0,
                 },
                 role: {
                     type: DataTypes.STRING,

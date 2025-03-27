@@ -70,13 +70,14 @@ class Rating extends Model<RatingAttributes, RatingCreationAttributes> implement
                 tableName: "ratings",
                 timestamps: true,
                 underscored: true,
+                hooks: {
+                    beforeDestroy: async (rating) => {
+                        throw new Error("Ratings cannot be deleted.");
+                    }
+                }
             }
         );
     }
 }
-
-Rating.beforeDestroy(() => {
-    throw new Error("Ratings cannot be deleted.");
-});
 
 export default Rating;

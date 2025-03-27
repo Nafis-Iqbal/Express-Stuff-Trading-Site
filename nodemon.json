@@ -1,0 +1,6 @@
+{
+    "watch": ["src"],
+    "ext": "ts",
+    "exec": "ts-node --inspect=9229 --transpile-only src/app.ts"
+  }
+  

@@ -4,10 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon --ext ts --exec npx ts-node src/server.ts",
+    "dev": "npx nodemon --inspect=9229 --signal SIGTERM --ext ts --exec npx ts-node --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "migrate": "npx sequelize-cli db:migrate --config dist/Config/config.js --migrations-path dist/Migrations"
+    "migrate": "npx sequelize-cli db:migrate --config dist/Config/dbconfig.js --migrations-path dist/Migrations"
   },
   "repository": {
     "type": "git",
@@ -22,17 +22,29 @@
   "homepage": "https://github.com/Nafis-Iqbal/Express-Task-Manager#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "csurf": "^1.10.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.6.0",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.6"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
+    "@types/csurf": "^1.11.5",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.13.11",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
