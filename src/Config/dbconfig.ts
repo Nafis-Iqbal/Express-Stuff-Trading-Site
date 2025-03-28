@@ -42,15 +42,4 @@ const config: IDBConfig = {
 };
 
 export default config;
-module.exports = {
-  development: {
-    username: "root1",
-    password: "1234",
-    database: "task_manager_db_exp",
-    host: "127.0.0.1",
-    port: 3306,
-    dialect: "mysql",
-  },
-  test: { /* same structure */ },
-  production: { /* same structure */ },
-};
+module.exports = config;
