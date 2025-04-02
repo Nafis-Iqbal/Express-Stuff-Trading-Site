@@ -1,4 +1,9 @@
 import { Model, DataTypes, Optional, Sequelize } from "sequelize";
+import { HasManyGetAssociationsMixin, HasManyAddAssociationMixin, HasManyAddAssociationsMixin} from "sequelize";
+
+import Listing from "./Listing";
+import Bid from "./Bid";
+import Trade from "./Trade";
 
 interface UserAttributes {
     id: number;
@@ -12,12 +17,9 @@ interface UserAttributes {
     rating: number;
     credits: number;
     role: string;
-    created_at: Date;
-    updated_at: Date;
 }
 
-interface UserCreationAttributes extends Optional<UserAttributes, "id"|"email_verified_at"|"remember_token"|"created_at"|
-"updated_at"|"bio"|"profile_picture"|"rating"|"credits"|"role">{};
+interface UserCreationAttributes extends Optional<UserAttributes, "id"|"email_verified_at"|"remember_token"|"bio"|"profile_picture"|"rating"|"credits"|"role">{};
 
 class User extends Model<UserAttributes,UserCreationAttributes> implements UserAttributes{
     id!: number;
@@ -31,8 +33,10 @@ class User extends Model<UserAttributes,UserCreationAttributes> implements UserA
     rating!: number;
     credits!: number;
     role!: string;
-    created_at!: Date;
-    updated_at!: Date;
+
+    public getListings!: HasManyGetAssociationsMixin<Listing>;
+    public getBids!: HasManyGetAssociationsMixin<Bid>;
+    public getTrades!: HasManyGetAssociationsMixin<Trade>;
 
     static initModel(sequelize: Sequelize)
     {
@@ -87,23 +91,12 @@ class User extends Model<UserAttributes,UserCreationAttributes> implements UserA
                     allowNull: false,
                     defaultValue: "user",
                 },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
-                updated_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
             },
             {
                 sequelize,
                 modelName: "User",
                 tableName: "users",
                 timestamps: true,
-                underscored: true
             }
         );
     }

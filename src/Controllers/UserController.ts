@@ -1,43 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs';
-import Redis from "ioredis";
-import User from "../Models/User";
 
+import { UserService } from "../Services/UserService"; 
+
+//import Redis from "ioredis";
 //const redisClient = new Redis();
 
 class UserController{
-    static createUser = async (req: Request, res: Response, next: NextFunction) => {
+    createUser = async (req: Request, res: Response, next: NextFunction) => {
         try{
+            const userService = new UserService();
             const { user_name, email, password } = req.body;
-            
-            const existingUser = await User.findOne({
-                where: { email: email } 
-            });
-            
-            if(existingUser)
-            {
-                res.status(400).json({ message: "Error creating user. Email already exists.", status: "Failed" });
-                return;
-            }
-            
-            const hashedPassword = await bcrypt.hash(password, 10);
 
-            const newUser = await User.create({
-                user_name,
-                email,
-                password_hash: hashedPassword,
-            });
+            const response = await userService.registerUser(user_name, email, password);
             
-            res.status(201).json({
-                message: "User created successfully.",
-                status: "success",
-                data: {
-                    id: newUser.id,
-                    user: user_name,
-                    email: email,
-                }
-            });
+            res.status((response.status === "success") ? 201 : 400).json(response);
             return;
         }
         catch(error)
@@ -48,53 +26,88 @@ class UserController{
     }
 
     // Login function with async handler
-    static login = async (req: Request, res: Response, next: NextFunction) => {
+    login = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const userService = new UserService();
             const { email, password } = req.body;
 
-            const user = await User.findOne({ where: {email}});
-
-            if(!user){
-                res.status(401).json({
-                    status: "failed",
-                    message: "Email doesn't exist."
-                });
-                return;
-            }
-            else{
-                const passwordMatch = await bcrypt.compare(password, user.password_hash);
-
-                if(passwordMatch){
-                    const token = jwt.sign(
-                        { id: user.id, email: user.email }, // Payload
-                        process.env.JWT_SECRET_KEY as string,  // Secret key
-                        { expiresIn: '1h' }                // Token expiration time
-                    );
-
-                    res.status(200).json({ 
-                        status: "success", 
-                        message: "Logged in successfully.", 
-                        auth_token: token,
-                    });
-                    return;
-                }
-                else{
-                    res.status(401).json({
-                        status: "failed",
-                        message: "Wrong email or password."
-                    });
-                    return;
-                } 
-            }       
+            const response = await userService.loginUser(email, password);
+            
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;  
         } catch (error) {
             next(error);
             return;
         }
-    };    
+    }; 
+
+    updateUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userService = new UserService();
+            const { id, user_name, role, bio, profile_picture, rating, credits } = req.body;
+
+            const response = await userService.updateUser({id, user_name, role, bio, profile_picture, rating, credits});
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userService = new UserService();
+            const { id } = req.body;
+
+            const response = await userService.deleteUser(id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    getUserDetail = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userService = new UserService();
+            const { id } = req.body;
+
+            const response = await userService.getUserDetail(id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userService = new UserService();
+
+            const response = await userService.getAllUsers();
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
 
     // Logout function
-    static logout = async (req: Request, res: Response, next: NextFunction) => {
+    logout = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const userService = new UserService();
             const authHeader = req.headers.authorization;
 
             if(!authHeader || !authHeader.startsWith("Bearer "))

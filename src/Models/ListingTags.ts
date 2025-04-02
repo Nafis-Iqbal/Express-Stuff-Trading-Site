@@ -13,11 +13,13 @@ class ListingTags extends Model<ListingTagsAttributes> {
                     type: DataTypes.INTEGER,
                     allowNull: false,
                     references: { model: "listings", key: "id" },
+                    onDelete: "CASCADE",
                 },
                 tag_id: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
                     references: { model: "tags", key: "id" },
+                    onDelete: "CASCADE",
                 }
             },
             {

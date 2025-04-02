@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { role } from "../Types&Enums/Enums";
 
 export const createUserValidation = [
     body("email").exists().withMessage("No email entered.")
@@ -18,6 +19,11 @@ export const loginUserValidation = [
     body("password").exists().withMessage("No password entered."),
 ];
 
-export const updateUserValidation = [
-
+export const userDataValidation = [
+    body("user_name").optional().isString().withMessage("User name must be a string"),
+    body("role").optional().isIn(Object.values(role)).withMessage("role must be of types user, manager, admin"),
+    body("bio").optional().isString().withMessage("Bio must be a string"),
+    body("profile_picture").optional().isString().withMessage("Profile picture link must be a string"),
+    body("rating").optional().isNumeric().withMessage("Rating must be a number"),
+    body("credits").optional().isInt().withMessage("Credits must be an integer")
 ];

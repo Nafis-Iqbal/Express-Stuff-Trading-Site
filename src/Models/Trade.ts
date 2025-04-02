@@ -1,5 +1,8 @@
 import { Model, DataTypes, Optional, Sequelize } from "sequelize";
-import { listingStatus } from "../Types&Enums/Enums";
+import { BelongsToGetAssociationMixin } from "sequelize";
+import { tradeStatus } from "../Types&Enums/Enums";
+
+import User from "./User";
 
 //one to one relation with a listing
 
@@ -8,21 +11,22 @@ interface TradeAttributes {
     listing_id: number;
     buyer_id: number;
     seller_id: number;
-    status: listingStatus;
+    status: tradeStatus;
     amount: number;
-    created_at: Date
 }
 
-interface TradeCreationAttributes extends Optional<TradeAttributes, "id"|"created_at">{};
+interface TradeCreationAttributes extends Optional<TradeAttributes, "id" | "status">{};
 
 class Trade extends Model<TradeAttributes,TradeCreationAttributes> implements TradeAttributes{
     id!: number;
     buyer_id!: number;
     seller_id!: number;
     listing_id!: number;
-    status!: listingStatus;
+    status!: tradeStatus;
     amount!: number;
-    created_at!: Date;
+
+    public getBuyerUser!: BelongsToGetAssociationMixin<User>;
+    public getSellerUser!: BelongsToGetAssociationMixin<User>;
 
     static initModel(sequelize: Sequelize)
     {
@@ -52,17 +56,13 @@ class Trade extends Model<TradeAttributes,TradeCreationAttributes> implements Tr
                     onUpdate: "CASCADE",
                 },
                 status: {
-                    type: DataTypes.ENUM(...Object.values(listingStatus)),
+                    type: DataTypes.ENUM(...Object.values(tradeStatus)),
                     allowNull: false,
+                    defaultValue: tradeStatus.pending
                 },
                 amount: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
-                },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
                 },
             },
             {
@@ -70,7 +70,6 @@ class Trade extends Model<TradeAttributes,TradeCreationAttributes> implements Tr
                 modelName: "Trade",
                 tableName: "trades",
                 timestamps: true,
-                underscored: true
             }
         );
     }

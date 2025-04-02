@@ -1,5 +1,8 @@
 import { Model, DataTypes, Optional, Sequelize } from "sequelize";
+import { BelongsToGetAssociationMixin } from "sequelize";
 
+import User from "./User";
+import Listing from "./Listing";
 //has many to one relation with listings
 //has many to one relation with users
 
@@ -9,7 +12,6 @@ interface BidAttributes{
     description: string;
     amount: number;
     bidder_id: number;
-    created_at: Date;
 }
 
 interface BidCreationAttributes extends Optional<BidAttributes, "id">{};
@@ -20,7 +22,9 @@ class Bid extends Model<BidAttributes, BidCreationAttributes> implements BidAttr
     description!: string;
     amount!: number;
     bidder_id!: number;
-    created_at!: Date;
+
+    getUser!: BelongsToGetAssociationMixin<User>;
+    getListing!: BelongsToGetAssociationMixin<Listing>; 
 
     static initModel(sequelize: Sequelize)
     {
@@ -59,18 +63,12 @@ class Bid extends Model<BidAttributes, BidCreationAttributes> implements BidAttr
                     onDelete: "CASCADE",
                     onUpdate: "CASCADE",
                 },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
             },
             {
                 sequelize,
                 modelName: "Bid",
                 tableName: "bids",
                 timestamps: true,
-                underscored: true,
             }
         );
     }

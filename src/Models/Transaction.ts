@@ -7,10 +7,9 @@ interface TransactionAttributes{
     buyer_id: number;
     seller_id: number;
     amount: number;
-    created_at: Date;
 }
 
-interface TransactionCreationAttributes extends Optional<TransactionAttributes, "id"|"created_at">{};
+interface TransactionCreationAttributes extends Optional<TransactionAttributes, "id">{};
 
 class Transaction extends Model<TransactionAttributes, TransactionCreationAttributes> implements TransactionAttributes{
     id!: number;
@@ -19,7 +18,6 @@ class Transaction extends Model<TransactionAttributes, TransactionCreationAttrib
     buyer_id!: number;
     seller_id!: number;
     amount!: number;
-    created_at!: Date;
 
     static initModel(sequelize: Sequelize)
     {
@@ -54,17 +52,12 @@ class Transaction extends Model<TransactionAttributes, TransactionCreationAttrib
                     type: DataTypes.INTEGER,
                     allowNull: false,
                 },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                }
             },
             {
                 sequelize,
                 modelName: "Transaction",
                 tableName: "transactions",
                 timestamps: true,
-                underscored: true,
                 hooks: {
                     beforeDestroy: async () => {
                         throw new Error("Transactions cannot be deleted.");

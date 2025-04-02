@@ -18,6 +18,9 @@ import {errorHandler} from "./Middlewares/CustomMiddlewares";
 
 import {sequelize} from "./Models";
 
+import global from "./Types&Enums/express";
+import global1 from "./Types&Enums/CommonTypes";
+
 const app = express();
 dotenv.config();
 

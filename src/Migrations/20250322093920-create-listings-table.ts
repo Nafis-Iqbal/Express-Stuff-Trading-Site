@@ -29,6 +29,10 @@ module.exports = {
           type: DataTypes.STRING,
           allowNull: false,
       },
+      location: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
       exchange_items: {
           type: DataTypes.STRING,
           allowNull: false,
@@ -41,12 +45,12 @@ module.exports = {
           type: DataTypes.ENUM(...Object.values(listingStatus)),
           allowNull: false,
       },
-      created_at: {
+      createdAt: {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,
       },
-      updated_at: {
+      updatedAt: {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,

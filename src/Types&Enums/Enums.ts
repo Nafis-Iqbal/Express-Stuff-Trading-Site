@@ -10,9 +10,15 @@ export enum listingStatus{
     cancelled = "cancelled"
 }
 
+export enum tradeStatus{
+    pending = "pending",
+    completed = "completed"
+}
+
 export enum priority{
     urgent = "urgent",
     normal = "normal"
 }
 
-export{}
+
+export {};

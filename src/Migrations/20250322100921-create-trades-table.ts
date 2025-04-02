@@ -1,7 +1,7 @@
 'use strict';
 
 import { QueryInterface, Sequelize, DataTypes } from 'sequelize';
-import { listingStatus } from '../Types&Enums/Enums';
+import { tradeStatus } from '../Types&Enums/Enums';
 
 module.exports = {
   async up (queryInterface: QueryInterface, Sequelize: Sequelize) {
@@ -30,17 +30,23 @@ module.exports = {
           onUpdate: "CASCADE",
       },
       status: {
-          type: DataTypes.ENUM(...Object.values(listingStatus)),
+          type: DataTypes.ENUM(...Object.values(tradeStatus)),
           allowNull: false,
+          defaultValue: tradeStatus.pending,
       },
       amount: {
           type: DataTypes.INTEGER,
           allowNull: false,
       },
-      created_at: {
+      createdAt: {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
     });
   },

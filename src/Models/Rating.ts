@@ -1,25 +1,29 @@
 import { Model, DataTypes, Optional, Sequelize } from "sequelize";
+import { BelongsToGetAssociationMixin } from "sequelize";
 
 interface RatingAttributes{
     id: number;
     rating: number;
     listing_id: number;
+    trade_id: number;
     rating_giver_id: number;
     rating_taker_id: number;
     comment: string;
-    created_at: Date;
 }
 
-interface RatingCreationAttributes extends Optional<RatingAttributes, "id"|"created_at">{};
+interface RatingCreationAttributes extends Optional<RatingAttributes, "id">{};
 
 class Rating extends Model<RatingAttributes, RatingCreationAttributes> implements RatingAttributes{
     id!: number;
     rating!: number;
     listing_id!: number;
+    trade_id!: number;
     rating_giver_id!: number;
     rating_taker_id!: number;
     comment!: string;
-    created_at!: Date;
+
+    public getRatingGiverUser!: BelongsToGetAssociationMixin<User>;
+    public getRatingAcceptingUser!: BelongsToGetAssociationMixin<User>;
 
     static initModel(sequelize: Sequelize)
     {
@@ -35,6 +39,10 @@ class Rating extends Model<RatingAttributes, RatingCreationAttributes> implement
                     allowNull: false,
                 },
                 listing_id: {
+                    type: DataTypes.INTEGER,
+                    allowNull: false,
+                },
+                trade_id: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
                 },
@@ -58,18 +66,12 @@ class Rating extends Model<RatingAttributes, RatingCreationAttributes> implement
                     type: DataTypes.STRING,
                     allowNull: true,
                 },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                }
             },
             {
                 sequelize,
                 modelName: "Rating",
                 tableName: "ratings",
                 timestamps: true,
-                underscored: true,
                 hooks: {
                     beforeDestroy: async (rating) => {
                         throw new Error("Ratings cannot be deleted.");

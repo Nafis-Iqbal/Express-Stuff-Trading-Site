@@ -1,17 +1,22 @@
 import { Model, DataTypes, Optional, Sequelize } from "sequelize";
+import { BelongsToManyGetAssociationsMixin } from "sequelize";
+
+import Listing from "./Listing";
 
 //Tags have many to many relation with Listings
 
 interface TagAttributes{
     id: number;
     title: string;
-    created_at: Date;
 }
 
-class Tag extends Model<TagAttributes> implements TagAttributes{
+interface TagCreationAttributes extends Optional<TagAttributes, "id">{};
+
+class Tag extends Model<TagAttributes, TagCreationAttributes> implements TagAttributes{
     id!: number;
     title!: string;
-    created_at!: Date;
+
+    public getListings!: BelongsToManyGetAssociationsMixin<Listing>;
 
     static initModel(sequelize: Sequelize)
     {
@@ -26,18 +31,12 @@ class Tag extends Model<TagAttributes> implements TagAttributes{
                     type: DataTypes.STRING,
                     allowNull: false,
                 },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
             },
             {
                 sequelize,
                 modelName: "Tag",
                 tableName: "tags",
                 timestamps: true,
-                underscored: true,
             }
         );
     }

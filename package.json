@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon --inspect=9229 --signal SIGTERM --ext ts --exec npx ts-node --transpile-only src/server.ts",
+    "dev": "npx nodemon --delay 500ms --ext ts --exec npx ts-node --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "migrate": "npx sequelize-cli db:migrate --config dist/Config/dbconfig.js --migrations-path dist/Migrations"

@@ -6,14 +6,16 @@ module.exports = {
   async up (queryInterface: QueryInterface, Sequelize: Sequelize) {
     await queryInterface.createTable('listing_tags', {
       listing_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: { model: "listings", key: "id" },
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: { model: "listings", key: "id" },
+          onDelete: "CASCADE",
       },
       tag_id: {
           type: DataTypes.INTEGER,
           allowNull: false,
           references: { model: "tags", key: "id" },
+          onDelete: "CASCADE",
       }
     });
   },

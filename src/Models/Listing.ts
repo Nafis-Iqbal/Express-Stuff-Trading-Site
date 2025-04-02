@@ -1,5 +1,11 @@
-import { Model, DataTypes, Optional, Sequelize } from "sequelize";
+import { Model, DataTypes, Optional, Sequelize, BelongsToGetAssociationMixin } from "sequelize";
+import { BelongsToManyGetAssociationsMixin, BelongsToManyAddAssociationsMixin, BelongsToManyRemoveAssociationsMixin } from "sequelize";
+import { HasManyGetAssociationsMixin } from "sequelize";
 import { listingStatus } from "../Types&Enums/Enums";
+
+import Tag from "./Tag";
+import User from "./User";
+import Bid from "./Bid";
 
 //Each listing can have multiple category tags, and bids under it.
 //category tags will have many to many relation with Listing.
@@ -9,27 +15,33 @@ import { listingStatus } from "../Types&Enums/Enums";
 interface ListingAttributes{
     id: number;
     user_id: number;
-    title: number;
+    title: string;
     description: string;
+    location: string;
     exchange_items: string;
     price: number;
     status: listingStatus;
-    created_at: Date;
-    updated_at: Date;
 }
 
-interface ListingCreationAttributes extends Optional<ListingAttributes, "id"|"created_at"|"updated_at">{};
+interface ListingCreationAttributes extends Optional<ListingAttributes, "id"|"status">{};
 
 class Listing extends Model<ListingAttributes, ListingCreationAttributes> implements ListingAttributes{
     id!: number;
     user_id!: number;
-    title!: number;
+    title!: string;
     description!: string;
+    location!: string;
     exchange_items!: string;
     price!: number;
     status!: listingStatus;
-    created_at!: Date;
-    updated_at!: Date;
+
+    public getUser!: BelongsToGetAssociationMixin<User>;
+
+    public getTags!: BelongsToManyGetAssociationsMixin<Tag>;
+    public addTags!: BelongsToManyAddAssociationsMixin<Tag, number>;
+    public removeTags!: BelongsToManyRemoveAssociationsMixin<Tag, number>;
+
+    public getBids!: HasManyGetAssociationsMixin<Bid>;
 
     static initModel(sequelize: Sequelize)
     {
@@ -58,6 +70,10 @@ class Listing extends Model<ListingAttributes, ListingCreationAttributes> implem
                     type: DataTypes.STRING,
                     allowNull: false,
                 },
+                location: {
+                    type: DataTypes.STRING,
+                    allowNull: false,
+                },
                 exchange_items: {
                     type: DataTypes.STRING,
                     allowNull: false,
@@ -69,16 +85,7 @@ class Listing extends Model<ListingAttributes, ListingCreationAttributes> implem
                 status: {
                     type: DataTypes.ENUM(...Object.values(listingStatus)),
                     allowNull: false,
-                },
-                created_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
-                },
-                updated_at: {
-                    type: DataTypes.DATE,
-                    allowNull: false,
-                    defaultValue: DataTypes.NOW,
+                    defaultValue: listingStatus.available
                 },
             },
             {
@@ -86,7 +93,6 @@ class Listing extends Model<ListingAttributes, ListingCreationAttributes> implem
                 modelName: "Listing",
                 tableName: "listings",
                 timestamps: true,
-                underscored: true
             }
         );
     }

@@ -30,8 +30,25 @@ declare global{
     }
 
     interface Auth{
-        auth_token: string;
-        user_id: number; 
+        email: string;
+        id: number; 
+    }
+
+    enum role{
+        user = "user",
+        manager = "manager",
+        admin = "admin"
+    }
+    
+    enum listingStatus{
+        available = "available",
+        sold = "sold",
+        cancelled = "cancelled"
+    }
+    
+    enum priority{
+        urgent = "urgent",
+        normal = "normal"
     }
 }
 

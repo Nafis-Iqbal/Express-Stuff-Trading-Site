@@ -3,7 +3,6 @@ import { validationResult } from "express-validator";
 import { ValidationError } from "sequelize";
 import  jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import Redis from "ioredis";
-
 //const redisClient = new Redis();
 
 // Middleware to check for validation errors
@@ -34,6 +33,11 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 
     try{
         const decoded = jwt.verify(token ?? "", secretKey);
+        if (decoded && typeof decoded !== "string") {
+            const userData = decoded as { id: number; email: string };
+            req.user = userData;
+        }
+        
         next();
     }
     catch(error)

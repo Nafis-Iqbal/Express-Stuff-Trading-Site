@@ -42,22 +42,24 @@ module.exports = {
       rating: {
           type: DataTypes.FLOAT,
           allowNull: false,
+          defaultValue: 0.0,
       },
       credits: {
           type: DataTypes.INTEGER,
           allowNull: false,
+          defaultValue: 0.0,
       },
       role: {
           type: DataTypes.STRING,
           allowNull: false,
           defaultValue: "user",
       },
-      created_at: {
+      createdAt: {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,
       },
-      updated_at: {
+      updatedAt: {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,

@@ -38,11 +38,16 @@ module.exports = {
           onDelete: "CASCADE",
           onUpdate: "CASCADE",
       },
-      created_at: {
+      createdAt: {
           type: DataTypes.DATE,
           allowNull: false,
           defaultValue: DataTypes.NOW,
       },
+      updatedAt: {
+          type: DataTypes.DATE,
+          allowNull: false,
+          defaultValue: DataTypes.NOW,
+    },
     });
   },
 

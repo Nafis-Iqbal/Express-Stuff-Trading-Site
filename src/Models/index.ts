@@ -7,6 +7,7 @@ import Trade from "./Trade";
 import Tag from "./Tag";
 import Rating from "./Rating";
 import Transaction from "./Transaction";
+import ListingTags from "./ListingTags";
 
 User.initModel(sequelize);
 Listing.initModel(sequelize);
@@ -15,6 +16,7 @@ Trade.initModel(sequelize);
 Tag.initModel(sequelize);
 Rating.initModel(sequelize);
 Transaction.initModel(sequelize);
+ListingTags.initModel(sequelize);
 
 //USER
 //has one to many relation with listings.
@@ -39,12 +41,19 @@ Transaction.initModel(sequelize);
 
 //TRANSACTION
 //one to one relation with trade.
-
+//D
 User.hasMany(Listing, {foreignKey: "user_id", as: "listings"});
-Listing.belongsTo(User, {foreignKey: "user_id", as:"owner"});
+Listing.belongsTo(User, {foreignKey: "user_id", as:"user"});
 
-User.hasMany(Bid, {foreignKey: "user_id", as: "bids"});
-Bid.belongsTo(User, {foreignKey: "user_id", as: "owner"});
+//D
+User.hasMany(Bid, {foreignKey: "bidder_id", as: "bids"});
+Bid.belongsTo(User, {foreignKey: "bidder_id", as: "user"});
+
+User.hasMany(Trade, {foreignKey: "buyer_id", as: "buyTrades"});
+Trade.belongsTo(User, {foreignKey: "buyer_id", as: "buyerUser"});
+
+User.hasMany(Trade, {foreignKey: "seller_id", as: "sellTrades"});
+Trade.belongsTo(User, {foreignKey: "seller_id", as: "sellerUser"});
 
 User.hasMany(Rating, {foreignKey: "rating_giver_id", as: "givenRatings"});
 Rating.belongsTo(User, {foreignKey: "rating_giver_id", as: "ratingGiverUser"});
@@ -52,11 +61,13 @@ Rating.belongsTo(User, {foreignKey: "rating_giver_id", as: "ratingGiverUser"});
 User.hasMany(Rating, {foreignKey: "rating_taker_id", as: "acceptedRatings"});
 Rating.belongsTo(User, {foreignKey: "rating_taker_id", as: "ratingAcceptingUser"});
 
+//D
 Listing.hasMany(Bid, {foreignKey: "listing_id", as: "bids"});
 Bid.belongsTo(Listing, {foreignKey: "listing_id", as: "parentListing"});
 
-Listing.belongsToMany(Tag, {through: "ListingTags", foreignKey: "listing_id", otherKey: "tag_id", as: "tags"});
-Tag.belongsToMany(Listing, {through: "ListingTags", foreignKey: "tag_id", otherKey: "listing_id", as: "listings"});
+//D
+Listing.belongsToMany(Tag, {through: ListingTags, foreignKey: "listing_id", otherKey: "tag_id", as: "tags"});
+Tag.belongsToMany(Listing, {through: ListingTags, foreignKey: "tag_id", otherKey: "listing_id", as: "listings"});
 
 Listing.hasOne(Trade, {foreignKey: "listing_id", as: "trade"});
 Trade.belongsTo(Listing, {foreignKey: "listing_id", as: "listing"});
@@ -64,7 +75,7 @@ Trade.belongsTo(Listing, {foreignKey: "listing_id", as: "listing"});
 Trade.hasOne(Transaction, {foreignKey: "trade_id", as: "trade"});
 Transaction.belongsTo(Trade, {foreignKey: "trade_id", as: "transaction"});
 
-export {sequelize, User, Listing, Bid, Trade, Tag, Rating, Transaction};
+export {sequelize, User, Listing, Bid, Trade, Tag, Rating, Transaction, ListingTags};
 
 
 

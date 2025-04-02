@@ -4,7 +4,7 @@ import { QueryInterface, Sequelize, DataTypes } from 'sequelize';
 
 module.exports = {
   async up (queryInterface: QueryInterface, Sequelize: Sequelize) {
-    queryInterface.createTable('tags', {
+    await queryInterface.createTable('tags', {
       id: {
           type: DataTypes.INTEGER,
           autoIncrement: true,
@@ -14,15 +14,20 @@ module.exports = {
           type: DataTypes.STRING,
           allowNull: false,
       },
-      created_at: {
-          type: DataTypes.DATE,
-          allowNull: false,
-          defaultValue: DataTypes.NOW,
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
-      });
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+    });
   },
 
   async down (queryInterface: QueryInterface, Sequelize: Sequelize) {
-    queryInterface.dropTable('tags');
+    await queryInterface.dropTable('tags');
   }
 };
