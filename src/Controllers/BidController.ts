@@ -39,7 +39,7 @@ class BidController{
     deleteBid = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const bidService = new BidService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await bidService.deleteBid(req.user, id);
 
@@ -55,7 +55,7 @@ class BidController{
     getBidDetail = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const bidService = new BidService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await bidService.getBidDetail(id);
 

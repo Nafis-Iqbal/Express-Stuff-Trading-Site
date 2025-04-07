@@ -39,7 +39,7 @@ class ListingController{
     deleteListing = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const listingService = new ListingService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await listingService.deleteListing(req.user, id);
 
@@ -55,7 +55,7 @@ class ListingController{
     getListingDetail = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const listingService = new ListingService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await listingService.getListingDetail(id);
 
@@ -117,10 +117,25 @@ class ListingController{
         }
     }
 
+    getAllListingViews = async (req: Request, res: Response, next: NextFunction) => {
+        try{
+            const listingService = new ListingService();
+
+            const response = await listingService.getAllListingViews();
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch(error) {
+            next(error);
+            return;
+        }
+    }
+
     getUserListings = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const listingService = new ListingService();
-            const {user_id} = req.body;
+            const user_id = parseInt(req.query.user_id as string);
 
             const response = await listingService.getUserListings(user_id);
 
@@ -151,7 +166,7 @@ class ListingController{
     getListingTags = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const listingService = new ListingService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await listingService.getListingTags(id);
 
@@ -167,7 +182,7 @@ class ListingController{
     getListingBids = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const listingService = new ListingService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await listingService.getListingBids(id);
 

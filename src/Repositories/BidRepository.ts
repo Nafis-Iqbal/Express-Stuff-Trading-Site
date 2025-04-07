@@ -1,6 +1,8 @@
 import Bid from "../Models/Bid"; // ORM model
 import User from "../Models/User";
 
+import { safeToJson } from "../Utils/Utilities";
+
 export class BidRepository {
   async findAllListings()
   {

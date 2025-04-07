@@ -1,5 +1,6 @@
 import { BidRepository } from "../Repositories/BidRepository";
 import { ListingRepository } from "../Repositories/ListingRepository";
+import { ListingService } from "./ListingService";
 
 export class BidService{
     private bidRepository = new BidRepository();
@@ -16,7 +17,8 @@ export class BidService{
             }
         }
         else{
-            const listingOwnership = await this.verifyListingOwnership(listing_id, userData.id);
+            const listingService = new ListingService();
+            const listingOwnership = await listingService.verifyListingOwnership(listing_id, userData.id);
 
             if(listingOwnership){
                 return {
@@ -209,16 +211,6 @@ export class BidService{
         const bidderUser = await this.bidRepository.findBidderUserByBidId(bid_id);
 
         if(bidderUser && bidderUser.id === user_id){
-            return true;
-        }
-        else return false;
-    }
-
-    async verifyListingOwnership(listing_id: number, user_id: number)
-    {
-        const listingUser = await this.listingRepository.findListingUserByListingId(listing_id);
-
-        if(listingUser && listingUser.id === user_id){
             return true;
         }
         else return false;

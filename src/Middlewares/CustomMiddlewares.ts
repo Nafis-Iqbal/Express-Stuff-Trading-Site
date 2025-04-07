@@ -95,7 +95,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     }
 
     res.status(statusCode).json({
-        status: "Failed",
+        status: "failed",
         message,
         error: errorDetails,
     });

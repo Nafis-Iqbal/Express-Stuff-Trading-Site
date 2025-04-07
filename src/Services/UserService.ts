@@ -26,7 +26,7 @@ export class UserService{
         const token = jwt.sign(
             { id: newUser.id, email: newUser.email }, // Payload
             process.env.JWT_SECRET_KEY as string,  // Secret key
-            { expiresIn: '1h' }                // Token expiration time
+            { expiresIn: '2h' }                // Token expiration time
         );
 
         return {
@@ -57,7 +57,7 @@ export class UserService{
                 const token = jwt.sign(
                     { id: user.id, email: user.email }, // Payload
                     process.env.JWT_SECRET_KEY as string,  // Secret key
-                    { expiresIn: '1h' }                // Token expiration time
+                    { expiresIn: '2h' }                // Token expiration time
                 );
 
                 return { 
@@ -77,7 +77,7 @@ export class UserService{
 
     async getUserDetail(id: number)
     {
-        const userData = await this.userRepository.findById(id);
+        const userData = (await this.userRepository.findById(id))?.get();
 
         if(userData){
             return {
@@ -91,6 +91,35 @@ export class UserService{
                 message: "User not found",
                 status: "failed",
                 data: []
+            }
+        }
+    }
+
+    async getOwnUserDetail(userData: Auth | undefined)
+    {
+        if(!userData){
+            return {
+                message: "Error in authenticated user data. Check authentication process.",
+                status: "failed",
+                data: []
+            }
+        }
+        else{
+            const ownUserData = await this.userRepository.findById(userData.id);
+
+            if(ownUserData){
+                return {
+                    message: "Own user detail retrieved successfully",
+                    status: "success",
+                    data: ownUserData
+                };
+            }
+            else{
+                return {
+                    message: "User not found",
+                    status: "failed",
+                    data: []
+                }
             }
         }
     }

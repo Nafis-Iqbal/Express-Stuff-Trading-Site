@@ -5,7 +5,7 @@ export const listingCreateValidation = [
         .isString().withMessage("Listing name must be a string"),
     body("description").exists().withMessage("Must enter listing description")
         .isString().withMessage("Listing description must be a string")
-        .isLength({min:5, max:30}).withMessage("Listing description must be within range of 5-30"),
+        .isLength({min:5, max:60}).withMessage("Listing description must be within range of 5-60"),
     body("location").exists().withMessage("Must enter listing location")
         .isString().withMessage("Listing location must be a string")
         .isLength({min:2, max:30}).withMessage("Listing description must be within range of 2-30"),
@@ -17,7 +17,7 @@ export const listingCreateValidation = [
 export const listingUpdateValidation = [
     body("title").optional().isString().withMessage("Listing name must be a string"),
     body("description").optional().isString().withMessage("Listing description must be a string")
-        .isLength({min:5, max:30}).withMessage("Listing description must be within range of 5-30"),
+        .isLength({min:5, max:60}).withMessage("Listing description must be within range of 5-60"),
     body("location").optional().isString().withMessage("Listing location must be a string")
         .isLength({min:2, max:30}).withMessage("Listing description must be within range of 2-30"),
     body("exchange_items").optional().isString().withMessage("Exchange items must be a string")

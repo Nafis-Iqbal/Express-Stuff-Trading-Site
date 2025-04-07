@@ -60,7 +60,7 @@ class UserController{
     deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userService = new UserService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await userService.deleteUser(id);
 
@@ -76,9 +76,24 @@ class UserController{
     getUserDetail = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userService = new UserService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await userService.getUserDetail(id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    getOwnUserDetail = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userService = new UserService();
+
+            const response = await userService.getOwnUserDetail(req.user);
 
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;

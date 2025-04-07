@@ -38,7 +38,7 @@ class TagController{
     deleteTag = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const tagService = new TagService();
-            const { id } = req.body;
+            const id = parseInt(req.query.id as string);
 
             const response = await tagService.deleteTag(id);
 

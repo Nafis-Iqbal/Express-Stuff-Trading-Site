@@ -159,6 +159,26 @@ export class ListingService{
         }
     }
 
+    async getAllListingViews()
+    {
+        const allListingViews = await this.listingRepository.findAllListings();
+
+        if(allListingViews){
+            return {
+                message: "All listing views retrieved successfully.",
+                status: "success",
+                data: allListingViews
+            }
+        }
+        else{
+            return {
+                message: "Failed to retrieve listing views data.",
+                status: "failed",
+                data: []
+            }
+        }
+    }
+
     async getUserListings(user_id: number)
     {
         const userListings = await this.listingRepository.findUserListings(user_id);

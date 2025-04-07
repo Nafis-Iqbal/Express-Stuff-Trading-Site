@@ -1,30 +1,36 @@
 import Listing from "../Models/Listing";
 import { User } from "../Models";
 
+import { safeToJson } from "../Utils/Utilities";
+
 export class ListingRepository {
   async findAllListings()
   {
-    return await Listing.findAll();
+    return safeToJson(await Listing.findAll());
   }
 
   async findById(id: number) {
-    return await Listing.findByPk(id); // Sequelize query
+    return safeToJson(await Listing.findByPk(id)); // Sequelize query
   }
 
   async findByTitle(title: string) {
-    return await Listing.findOne({where: {title}}); // Sequelize query
+    return safeToJson(await Listing.findOne({
+      where: {title}
+    })); // Sequelize query
   }
 
   async findUserListingByTitle(user_id: number, title: string) {
-    return await Listing.findOne({where: {user_id, title}}); // Sequelize query
+    return safeToJson(await Listing.findOne({
+      where: {user_id, title}
+    })); // Sequelize query
   }
 
   async findListingUserByListingId(listing_id: number)
   {
-    const listing = await this.findById(listing_id);
+    const listing = await Listing.findByPk(listing_id);
 
     if(listing){
-      return await listing.getUser();
+      return safeToJson(await listing.getUser());
     }
     else return null;
   }
@@ -33,16 +39,16 @@ export class ListingRepository {
     const listing = await this.findById(id);
 
     if(listing){
-      return await listing.getTags();
+      return safeToJson(await listing.getTags());
     }
     else return null;
   }
 
   async findListingBids(id: number) {
-    const listing = await this.findById(id);
+    const listing = await Listing.findByPk(id);
 
     if(listing){
-      return await listing.getBids();
+      return safeToJson(await listing.getBids());
     }
     else return null;
   }
@@ -51,7 +57,7 @@ export class ListingRepository {
     const listingUser = await User.findByPk(user_id);
 
     if(listingUser){
-      return await listingUser.getListings();
+      return safeToJson(await listingUser.getListings());
     }
     else{
       return null;

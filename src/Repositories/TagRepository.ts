@@ -1,25 +1,27 @@
-import Tag from "../Models/Tag"; // ORM model
+import Tag from "../Models/Tag";
+
+import { safeToJson } from "../Utils/Utilities";
 
 export class TagRepository {
   async getTags() {
-    return await Tag.findAll();
+    return safeToJson(await Tag.findAll());
   }
 
   async getTagByTitle(title: string) {
-    return await Tag.findOne({where: { title}});
+    return safeToJson(await Tag.findOne({where: { title}}));
   }
 
   async getListingsByTagId(id: number) {
     const tag = await Tag.findByPk(id);
 
     if(tag){
-      return await tag.getListings();
+      return safeToJson(await tag.getListings());
     }
     else return null;
   }
 
   async createTag(title: string) {
-    return await Tag.create({ title });
+    return safeToJson(await Tag.create({ title }));
   }
 
   async updateTag(id: number, newTag: Partial<Tag>) {

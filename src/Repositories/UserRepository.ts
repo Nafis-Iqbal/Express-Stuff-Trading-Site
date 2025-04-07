@@ -1,26 +1,28 @@
 import User from "../Models/User";
 
+import { safeToJson } from "../Utils/Utilities";
+
 export class UserRepository {
   async findById(id: number) {
-    return await User.findByPk(id, {
+    return safeToJson(await User.findByPk(id, {
       attributes: {exclude: ['password_hash']},
-    });
+    }));
   }
 
   async findByEmail(email: string) {
-    return await User.findOne({
+    return safeToJson(await User.findOne({
       where: {email}
-    });
+    }));
   }
 
   async findAllUsers() {
-    return await User.findAll({
+    return safeToJson(await User.findAll({
       attributes: {exclude: ['password_hash']},
-    });
+    }));
   }
 
   async createUser(user_name: string, email: string, password_hash: string) {
-    return await User.create({ user_name, email, password_hash });
+    return safeToJson(await User.create({ user_name, email, password_hash }));
   }
 
   async updateUser(id: number, newUserData: Partial<User>) {
