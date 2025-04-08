@@ -77,7 +77,7 @@ export class UserService{
 
     async getUserDetail(id: number)
     {
-        const userData = (await this.userRepository.findById(id))?.get();
+        const userData = await this.userRepository.findById(id);
 
         if(userData){
             return {

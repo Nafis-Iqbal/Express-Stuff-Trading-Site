@@ -97,6 +97,21 @@ class BidController{
             return;
         }
     }
+
+    getUserOwnedBidViews = async (req: Request, res: Response, next: NextFunction) => {
+        try{
+            const bidService = new BidService();
+
+            const response = await bidService.getUserOwnedBidViews(req.user);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;    
+        }
+        catch(error) {
+            next(error);
+            return;
+        }
+    }
 }
 
 export default BidController;

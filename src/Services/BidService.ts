@@ -206,6 +206,36 @@ export class BidService{
         }
     }
 
+    async getUserOwnedBidViews(userData: Auth | undefined)
+    {
+        if(!userData)
+        {
+            return {
+                message: "Error in authenticated user data. Check authentication process.",
+                status: "failed",
+                data: []
+            }
+        }
+        else{
+            const userBids = await this.bidRepository.findUserBidViews(userData.id);
+            console.log(userBids);
+            if(userBids){
+                return {
+                    message: "User bids retrieved successfully.",
+                    status: "success",
+                    data: userBids
+                }
+            }
+            else{
+                return {
+                    message: "Failed to retrieve user bids data.",
+                    status: "failed",
+                    data: []
+                }
+            }
+        }
+    }
+
     async verifyBidOwnership(bid_id: number, user_id: number)
     {
         const bidderUser = await this.bidRepository.findBidderUserByBidId(bid_id);

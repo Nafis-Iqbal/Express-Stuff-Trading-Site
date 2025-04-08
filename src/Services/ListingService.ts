@@ -121,7 +121,7 @@ export class ListingService{
 
     async getListingDetail(id: number)
     {
-        const listingDetail = await this.listingRepository.findById(id);
+        const listingDetail = await this.listingRepository.findDetailById(id);
 
         if(listingDetail){
             return {
@@ -161,13 +161,13 @@ export class ListingService{
 
     async getAllListingViews()
     {
-        const allListingViews = await this.listingRepository.findAllListings();
+        const listingViews = await this.listingRepository.findAllListingViews();
 
-        if(allListingViews){
+        if(listingViews){
             return {
                 message: "All listing views retrieved successfully.",
                 status: "success",
-                data: allListingViews
+                data: listingViews
             }
         }
         else{

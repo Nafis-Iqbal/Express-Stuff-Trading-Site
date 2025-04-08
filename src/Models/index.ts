@@ -47,7 +47,7 @@ Listing.belongsTo(User, {foreignKey: "user_id", as:"user"});
 
 //D
 User.hasMany(Bid, {foreignKey: "bidder_id", as: "bids"});
-Bid.belongsTo(User, {foreignKey: "bidder_id", as: "user"});
+Bid.belongsTo(User, {foreignKey: "bidder_id", as: "bidder"});
 
 User.hasMany(Trade, {foreignKey: "buyer_id", as: "buyTrades"});
 Trade.belongsTo(User, {foreignKey: "buyer_id", as: "buyerUser"});

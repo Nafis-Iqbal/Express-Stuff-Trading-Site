@@ -1,5 +1,5 @@
-import Bid from "../Models/Bid"; // ORM model
-import User from "../Models/User";
+import { Sequelize } from "sequelize";
+import { User, Listing, Bid } from "../Models";
 
 import { safeToJson } from "../Utils/Utilities";
 
@@ -32,6 +32,25 @@ export class BidRepository {
     else{
       return null;
     }
+  }
+
+  async findUserBidViews(user_id: number){
+    return safeToJson(await Bid.findAll({
+      attributes: {
+        include: [
+          [Sequelize.col("parentListing.title"), 'listing_name']
+        ]
+      },
+      include: {
+        model: Listing,
+        as: "parentListing",
+        attributes: ['title']
+      },
+      where: {
+        bidder_id: user_id
+      },
+      group: ["Bid.id"]
+    }));
   }
 
   async findUserBidOnListing(user_id: number, listing_id: number)

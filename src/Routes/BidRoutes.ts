@@ -14,5 +14,6 @@ router.get("/detail", bidController.getBidDetail);
 
 router.get("/index", bidController.getAllBids);
 router.get("/user_index", bidController.getUserOwnedBids);
+router.get("/user_index_views", bidController.getUserOwnedBidViews);
 
 export default router;
