@@ -13,7 +13,7 @@ router.post("/create", UserValidators.createUserValidation, userController.creat
 router.post("/login", UserValidators.loginUserValidation, checkValidation, userController.login);
 router.get("/logout", userController.logout);
 
-router.put("/update", authenticateToken, CommonValidators.idValidation("id"), UserValidators.userDataValidation, checkValidation, userController.updateUser);
+router.put("/update", authenticateToken, UserValidators.userDataValidation, checkValidation, userController.updateUser);
 router.delete("/delete", authenticateToken, CommonValidators.idValidation("id"), checkValidation, userController.deleteUser);
 router.get("/own_detail", authenticateToken, userController.getOwnUserDetail);
 router.get("/detail", authenticateToken, CommonValidators.idValidation("id"), checkValidation, userController.getUserDetail);

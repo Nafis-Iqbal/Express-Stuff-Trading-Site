@@ -20,10 +20,11 @@ export const loginUserValidation = [
 ];
 
 export const userDataValidation = [
-    body("user_name").optional().isString().withMessage("User name must be a string"),
-    body("role").optional().isIn(Object.values(role)).withMessage("role must be of types user, manager, admin"),
-    body("bio").optional().isString().withMessage("Bio must be a string"),
-    body("profile_picture").optional().isString().withMessage("Profile picture link must be a string"),
-    body("rating").optional().isNumeric().withMessage("Rating must be a number"),
-    body("credits").optional().isInt().withMessage("Credits must be an integer")
+    body("id").exists().withMessage("No id entered").isInt().withMessage("id must be an integer."),
+    body("user_name").optional({ checkFalsy: true }).isString().withMessage("User name must be a string"),
+    body("role").optional({ checkFalsy: true }).isIn(Object.values(role)).withMessage("role must be of types user, manager, admin"),
+    body("bio").optional({ checkFalsy: true }).isString().withMessage("Bio must be a string"),
+    body("profile_picture").optional({ checkFalsy: true }).isString().withMessage("Profile picture link must be a string"),
+    body("rating").optional({ checkFalsy: true }).isNumeric().withMessage("Rating must be a number"),
+    body("credits").optional({ checkFalsy: true }).isInt().withMessage("Credits must be an integer")
 ];

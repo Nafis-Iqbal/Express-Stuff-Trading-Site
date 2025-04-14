@@ -85,6 +85,44 @@ export class TradeService{
         }
     }
 
+    async deleteTrade(userData: Auth | undefined, id: number)
+    {
+        if(!userData)
+        {
+            return {
+                message: "Error in authenticated user data. Check authentication process.",
+                status: "failed",
+                data: []
+            }
+        }
+        else{
+            const listingOwnership = await this.verifyTradeOwnership(id, userData.id);
+
+            if(listingOwnership){
+                const deleteStatus = await this.tradeRepository.deleteTrade(id);
+
+                if(deleteStatus){
+                    return {
+                        message: "Trade deleted successfully.",
+                        status: "success"
+                    }
+                }
+                else{
+                    return {
+                        message: "Failed to delete trade.",
+                        status: "failed"
+                    }
+                }
+            }
+            else{
+                return {
+                    message: "Failed to update trade. Trade not owned by user",
+                    status: "failed"
+                }
+            }   
+        }
+    }
+
     async getTradeDetail(userData: Auth | undefined, id: number)
     {
         if(!userData){
@@ -139,6 +177,46 @@ export class TradeService{
                     status: "failed",
                     data: []
                 }
+            }
+        }
+    }
+
+    async getUserTrades(user_id: number)
+    {
+        const tradesByUser = await this.tradeRepository.findUserOwnedTrades(user_id);
+
+        if(tradesByUser){
+            return {
+                message: "User trades retrieved successfully.",
+                status: "success",
+                data: tradesByUser
+            }
+        }
+        else{
+            return {
+                message: "Failed to retrieve user trades data.",
+                status: "failed",
+                data: []
+            }
+        }
+    }
+
+    async getUserTradeViews(user_id: number)
+    {
+        const tradesByUser = await this.tradeRepository.findUserTradeViews(user_id);
+
+        if(tradesByUser){
+            return {
+                message: "User trades retrieved successfully.",
+                status: "success",
+                data: tradesByUser
+            }
+        }
+        else{
+            return {
+                message: "Failed to retrieve user trades data.",
+                status: "failed",
+                data: []
             }
         }
     }

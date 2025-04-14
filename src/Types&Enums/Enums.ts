@@ -12,7 +12,8 @@ export enum listingStatus{
 
 export enum tradeStatus{
     pending = "pending",
-    completed = "completed"
+    completed = "completed",
+    cancelled = "cancelled"
 }
 
 export enum priority{

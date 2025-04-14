@@ -15,10 +15,10 @@ export class BidRepository {
 
   async findBidderUserByBidId(listing_id: number)
   {
-    const bid = await this.findById(listing_id);
+    const bid = await Bid.findByPk(listing_id);
 
     if(bid){
-      return await bid.getUser();
+      return await bid.getBidder();
     }
     else return null;
   }

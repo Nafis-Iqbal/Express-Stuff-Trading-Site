@@ -15,14 +15,14 @@ export const listingCreateValidation = [
 ]
 
 export const listingUpdateValidation = [
-    body("title").optional().isString().withMessage("Listing name must be a string"),
-    body("description").optional().isString().withMessage("Listing description must be a string")
+    body("title").optional({ checkFalsy: true }).isString().withMessage("Listing name must be a string"),
+    body("description").optional({ checkFalsy: true }).isString().withMessage("Listing description must be a string")
         .isLength({min:5, max:100}).withMessage("Listing description must be within range of 5-100"),
-    body("location").optional().isString().withMessage("Listing location must be a string")
+    body("location").optional({ checkFalsy: true }).isString().withMessage("Listing location must be a string")
         .isLength({min:2, max:30}).withMessage("Listing description must be within range of 2-30"),
-    body("exchange_items").optional().isString().withMessage("Exchange items must be a string")
+    body("exchange_items").optional({ checkFalsy: true }).isString().withMessage("Exchange items must be a string")
         .isLength({min:5, max:60}).withMessage("Items description must be within range of 5-60"),
-    body("status").optional().isIn(["sold", "available", "cancelled"]).withMessage("Status must be a valid listing Status type"),
+    body("status").optional({ checkFalsy: true }).isIn(["sold", "available", "cancelled"]).withMessage("Status must be a valid listing Status type"),
 ]
 
 export const tagArrayValidation = (id_key: string) => [

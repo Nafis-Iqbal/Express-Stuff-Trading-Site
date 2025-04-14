@@ -23,7 +23,7 @@ class Bid extends Model<BidAttributes, BidCreationAttributes> implements BidAttr
     amount!: number;
     bidder_id!: number;
 
-    getUser!: BelongsToGetAssociationMixin<User>;
+    getBidder!: BelongsToGetAssociationMixin<User>;
     getListing!: BelongsToGetAssociationMixin<Listing>; 
 
     static initModel(sequelize: Sequelize)

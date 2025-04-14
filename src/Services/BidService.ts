@@ -218,7 +218,7 @@ export class BidService{
         }
         else{
             const userBids = await this.bidRepository.findUserBidViews(userData.id);
-            console.log(userBids);
+            
             if(userBids){
                 return {
                     message: "User bids retrieved successfully.",

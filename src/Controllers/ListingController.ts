@@ -194,6 +194,22 @@ class ListingController{
             return;
         }
     }
+
+    getListingBidViews = async (req: Request, res: Response, next: NextFunction) => {
+        try{
+            const listingService = new ListingService();
+            const id = parseInt(req.query.id as string);
+
+            const response = await listingService.getListingBidViews(id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch(error) {
+            next(error);
+            return;
+        }
+    }
 }
 
 export default ListingController;

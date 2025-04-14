@@ -34,6 +34,22 @@ class TradeController{
         }
     }
 
+    deleteTrade = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const tradeService = new TradeService();
+            const id = parseInt(req.query.id as string);
+
+            const response = await tradeService.deleteTrade(req.user, id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
     getAllTrades = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const tradeService = new TradeService();
@@ -55,6 +71,38 @@ class TradeController{
             const {id} = req.body;
 
             const response = await tradeService.getTradeDetail(req.user, id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    getUserTrades = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const tradeService = new TradeService();
+            const user_id = parseInt(req.query.user_id as string);
+
+            const response = await tradeService.getUserTrades(user_id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    getUserTradeViews = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const tradeService = new TradeService();
+            const user_id = parseInt(req.query.user_id as string);
+
+            const response = await tradeService.getUserTradeViews(user_id);
 
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;

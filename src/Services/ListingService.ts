@@ -346,6 +346,27 @@ export class ListingService{
         }
     }
 
+    async getListingBidViews(id: number)
+    {
+        const listingBidViews = await this.listingRepository.findListingBidViews(id);
+
+        if(listingBidViews)
+        {
+            return {
+                message: "Listing bid views retrieved successfully.",
+                status: "success",
+                data: listingBidViews
+            }
+        }
+        else{
+            return {
+                message: "Listing has no bids added, or listing doesn't exist.",
+                status: "failed",
+                data: []
+            }
+        }
+    }
+
     async verifyListingOwnership(listing_id: number, user_id: number)
     {
         const listingUser = await this.listingRepository.findListingUserByListingId(listing_id);

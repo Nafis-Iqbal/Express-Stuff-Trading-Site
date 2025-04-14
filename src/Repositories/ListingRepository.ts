@@ -32,6 +32,9 @@ export class ListingRepository {
         as: "bids",
         attributes: [],
       },
+      where: {
+        status: 'available'
+      },
       group: ["Listing.id"]
     }));
 
@@ -132,6 +135,29 @@ export class ListingRepository {
       return safeToJson(await listing.getBids());
     }
     else return null;
+  }
+
+  async findListingBidViews(id: number) {
+    return safeToJson(await Bid.findAll({
+      attributes: {
+        include: [
+          'id',
+          'description',
+          'amount',
+          'bidder_id',
+          [Sequelize.col("bidder.user_name"), "bidder_name"],
+          [Sequelize.col("bidder.profile_picture"), "bidder_picture"],
+        ]
+      },
+      include: {
+        model: User,
+        as: "bidder",
+        attributes: ['user_name', 'profile_picture']
+      },
+      where: {
+        listing_id: id
+      }
+    }));
   }
 
   async findUserListings(user_id: number)

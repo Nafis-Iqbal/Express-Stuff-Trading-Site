@@ -1,6 +1,6 @@
 import Trade from "../Models/Trade";
-import { User } from "../Models";
-import { Op } from "sequelize";
+import { Listing, User } from "../Models";
+import { Op, Sequelize } from "sequelize";
 
 import { safeToJson } from "../Utils/Utilities";
 
@@ -27,6 +27,42 @@ export class TradeRepository{
         }));
     }
 
+    async findUserTradeViews(user_id: number)
+    {
+        return safeToJson(await Trade.findAll({
+            attributes: {
+                include: [
+                    [Sequelize.col("listing.title"), "listing_title"],
+                    [Sequelize.col("buyerUser.user_name"), "buyer_name"],
+                    [Sequelize.col("sellerUser.user_name"), "seller_name"]
+                ]
+            },
+            include: [
+                {
+                    model: Listing,
+                    as: "listing",
+                    attributes: ['title']
+                },
+                {
+                    model: User,
+                    as: "buyerUser",
+                    attributes: ['user_name']
+                },
+                {
+                    model: User,
+                    as: "sellerUser",
+                    attributes: ['user_name']
+                }
+            ],
+            where: {
+                [Op.or]: [
+                    { buyer_id: user_id },
+                    { seller_id: user_id }
+                ]
+            }
+        }));
+    }
+
     async findTradeByListingId(listing_id: number)
     {
         return safeToJson(await Trade.findOne({
@@ -36,7 +72,7 @@ export class TradeRepository{
 
     async findTradeSellerUserByTradeId(trade_id: number)
     {
-        const trade = await this.findById(trade_id);
+        const trade = await Trade.findByPk(trade_id);
 
         if(trade){
             return safeToJson(await trade.getSellerUser());
@@ -54,5 +90,21 @@ export class TradeRepository{
         return safeToJson(await Trade.update(newTradeData, {
             where: {id}
         }));
+    }
+
+    async deleteTrade(id: number)
+    {
+        const deletedRows = await Trade.destroy({
+            where: {id}
+        });
+
+        if(deletedRows === 0){
+            console.log("Trade not found");
+            return false;
+        }
+        else{
+            console.log("Trade deleted successfully");
+            return true;
+        }
     }
 }
