@@ -12,6 +12,18 @@ export const listingCreateValidation = [
     body("exchange_items").exists().withMessage("Must enter exhange items")
         .isString().withMessage("Exchange items must be a string")
         .isLength({min:3, max:60}).withMessage("Items description must be within range of 3-60"),
+    body("imageURLs")
+        .optional({ checkFalsy: true })
+        .isArray().withMessage("imageURLs must be an array")
+        .custom((value) => {
+            if (!Array.isArray(value)) return false;
+            for (const url of value) {
+                if (typeof url !== "string" || !/^https?:\/\/.+\..+/.test(url)) {
+                    throw new Error("Each imageURL must be a valid URL string");
+                }
+            }
+            return true;
+        }),
 ]
 
 export const listingUpdateValidation = [
@@ -23,6 +35,18 @@ export const listingUpdateValidation = [
     body("exchange_items").optional({ checkFalsy: true }).isString().withMessage("Exchange items must be a string")
         .isLength({min:5, max:60}).withMessage("Items description must be within range of 5-60"),
     body("status").optional({ checkFalsy: true }).isIn(["sold", "available", "cancelled"]).withMessage("Status must be a valid listing Status type"),
+    body("imageURLs")
+        .optional({ checkFalsy: true })
+        .isArray().withMessage("imageURLs must be an array")
+        .custom((value) => {
+            if (!Array.isArray(value)) return false;
+            for (const url of value) {
+                if (typeof url !== "string" || !/^https?:\/\/.+\..+/.test(url)) {
+                    throw new Error("Each imageURL must be a valid URL string");
+                }
+            }
+            return true;
+        }),
 ]
 
 export const tagArrayValidation = (id_key: string) => [
@@ -34,4 +58,17 @@ export const tagArrayValidation = (id_key: string) => [
             }
             return true;
         })
+]
+
+export const deleteImagesValidation = [
+    body("listing_id")
+        .isInt({ min: 1 }).withMessage("Listing ID must be a positive integer."),
+    body("imageIds")
+        .isArray({ min: 1 }).withMessage("Image IDs must be a non-empty array.")
+        .custom((value) => {
+            if (!Array.isArray(value) || !value.every(id => Number.isInteger(id) && id > 0)) {
+                throw new Error("All image IDs must be positive integers.");
+            }
+            return true;
+        }),
 ]

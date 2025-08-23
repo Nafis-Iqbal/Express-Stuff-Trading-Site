@@ -32,7 +32,7 @@ export class BidService{
 
                 if(userBidExistsOnListing){
                     return {
-                        message: "Bid creation failed. User already mae a bid on the listing",
+                        message: "Bid creation failed. User already made a bid on the listing",
                         status: "failed",
                         data: []
                     }

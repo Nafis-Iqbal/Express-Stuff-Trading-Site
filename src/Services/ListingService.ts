@@ -1,10 +1,18 @@
 import { ListingRepository } from "../Repositories/ListingRepository";
+import { ListingCreationAttributes, ListingAttributes } from "../Models/Listing";
+import { listingStatus } from "../Types&Enums/Enums";
+import { ImageService } from "./ImageService";
+import { ImageRepository } from "../Repositories";
 
 export class ListingService{
     private listingRepository = new ListingRepository();
-    
-    async createListing(userData: Auth | undefined, title: string, description: string, location: string, exchange_items: string, price: number)
+    private imageService = new ImageService();
+    private imageRepository = new ImageRepository();
+
+    async createListing(userData: Auth | undefined, listingData: ListingCreationAttributes)
     {
+        const {title, imageURLs} = listingData;
+
         if(!userData)
         {
             return {
@@ -14,7 +22,7 @@ export class ListingService{
             }
         }
         else{
-            const listingWithTitleExists = await this.listingRepository.findUserListingByTitle(userData.id, title);
+            const listingWithTitleExists = await this.listingRepository.findUserListingByTitle(userData.id, title ?? "");
 
             if(listingWithTitleExists){
                 return {
@@ -24,13 +32,25 @@ export class ListingService{
                 }
             }
 
-            const newListing = await this.listingRepository.createListing(userData.id, title, description, location, exchange_items, price);
+            const newListing = await this.listingRepository.createListing(listingData);
 
             if(newListing){
+                // Create images if imageURLs are provided
+                let imageResult;
+                if(imageURLs && imageURLs.length > 0) {
+                    imageResult = await this.imageService.createMultipleListingImages(userData, newListing.id, imageURLs);
+                    if(imageResult.status === "failed") {
+                        console.warn("Listing created but images failed:", imageResult.message);
+                    }
+                }
+
                 return {
                     message: "New listing created successfully.",
                     status: "success",
-                    data: newListing
+                    data: {
+                        listing: newListing,
+                        images: imageResult?.data || []
+                    }
                 }
             }
             else{
@@ -43,7 +63,7 @@ export class ListingService{
         }
     }
 
-    async updateListing(userData: Auth | undefined, newListingData: {id: number, title: string, description: string, location: string, exchange_items: string, price: number, status: listingStatus})
+    async updateListing(userData: Auth | undefined, newListingData: Partial<Listing> & {id: number, imageURLs?: string[]})
     {
         if(!userData)
         {
@@ -57,12 +77,28 @@ export class ListingService{
             const listingOwnership = await this.verifyListingOwnership(newListingData.id, userData.id);
 
             if(listingOwnership){
-                const updateStatus = await this.listingRepository.updateListing(newListingData.id, newListingData);
+                // Extract imageURLs before updating listing (since it's not a DB field)
+                const { imageURLs, ...listingUpdateData } = newListingData;
+                
+                const updateStatus = await this.listingRepository.updateListing(newListingData.id, listingUpdateData);
 
                 if(updateStatus){
+                    // Create images if imageURLs are provided
+                    let imageResult;
+                    if(imageURLs && imageURLs.length > 0) {
+                        imageResult = await this.imageService.createMultipleListingImages(userData, newListingData.id, imageURLs);
+                        if(imageResult.status === "failed") {
+                            console.warn("Listing updated but images failed:", imageResult.message);
+                        }
+                    }
+
                     return {
                         message: "Listing updated successfully.",
-                        status: "success"
+                        status: "success",
+                        data: {
+                            listing: "Updated",
+                            images: imageResult?.data || []
+                        }
                     }
                 }
                 else{
@@ -119,15 +155,71 @@ export class ListingService{
         }
     }
 
+    async deleteListingImages(userData: Auth | undefined, listing_id: number, imageIds: number[])
+    {
+        if(!userData)
+        {
+            return {
+                message: "Error in authenticated user data. Check authentication process.",
+                status: "failed"
+            }
+        }
+
+        try {
+            // Verify listing ownership
+            const listingOwnership = await this.verifyListingOwnership(listing_id, userData.id);
+
+            if(!listingOwnership){
+                return {
+                    message: "Cannot delete images. Listing not owned by user.",
+                    status: "failed"
+                }
+            }
+
+            // Delete images using repository
+            const deleteResult = await this.listingRepository.deleteListingImages(listing_id, imageIds);
+
+            if(deleteResult.success){
+                return {
+                    message: `Successfully deleted ${deleteResult.deletedCount} image(s).`,
+                    status: "success",
+                    data: {
+                        deletedCount: deleteResult.deletedCount,
+                        notFoundIds: deleteResult.notFoundIds
+                    }
+                }
+            }
+            else{
+                return {
+                    message: deleteResult.message || "Failed to delete images.",
+                    status: "failed"
+                }
+            }
+        }
+        catch(error){
+            console.error("Error deleting images:", error);
+            return {
+                message: "Error occurred while deleting images.",
+                status: "failed"
+            }
+        }
+    }
+
     async getListingDetail(id: number)
     {
-        const listingDetail = await this.listingRepository.findDetailById(id);
+        let listingDetail: Listing = await this.listingRepository.findDetailById(id);
+        const listingImages = await this.imageRepository.findImagesByListingId(id);
 
         if(listingDetail){
+            const finalListingDetail = {
+                ...listingDetail,  // Spread the listing data
+                images: listingImages
+            };
+
             return {
                 message: "Listing detail retrieved successfully.",
                 status: "success",
-                data: listingDetail
+                data: finalListingDetail
             }
         }
         else{
@@ -162,12 +254,22 @@ export class ListingService{
     async getAllListingViews()
     {
         const listingViews = await this.listingRepository.findAllListingViews();
+        const listingImages = await this.imageRepository.findAllListingsImages();
 
         if(listingViews){
+            const finalListingViewList = listingViews.map((view: any) => {
+                const viewImages = listingImages.filter((image: any) => image.listing_id === view.id);
+                
+                return {
+                    ...view,
+                    images: viewImages
+                };
+            });
+            
             return {
                 message: "All listing views retrieved successfully.",
                 status: "success",
-                data: listingViews
+                data: finalListingViewList
             }
         }
         else{

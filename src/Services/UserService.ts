@@ -1,12 +1,15 @@
 import { Request, Response, NextFunction } from "express";
+import { ListingRepository, UserRepository, TradeRepository } from "../Repositories";
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
-
-import { UserRepository } from "../Repositories/UserRepository";
+// Note: Global types are handled by tsconfig.json, no need to import .d.ts files at runtime
+import { role } from "../Types&Enums/Enums"; // Import the role enum
 
 export class UserService{
     private userRepository = new UserRepository();
-    
+    private listingRepository = new ListingRepository();
+    private tradeRepository = new TradeRepository();
+
     async registerUser(user_name: string, email: string, password: string)
     {
         const existingUser = await this.userRepository.findByEmail(email);
@@ -79,11 +82,20 @@ export class UserService{
     {
         const userData = await this.userRepository.findById(id);
 
+        const userListings = await this.listingRepository.findUserListings(id);
+        const userTrades = await this.tradeRepository.findUserOwnedTrades(id);
+        
         if(userData){
+            const finalUserDetail = {
+                ...userData,
+                totalListings: userListings.length,
+                totalTrades: userTrades.length
+            };
+            
             return {
                 message: "User detail retrieved successfully",
                 status: "success",
-                data: userData
+                data: finalUserDetail
             };
         }
         else{

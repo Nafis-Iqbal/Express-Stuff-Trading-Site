@@ -6,13 +6,14 @@ import { listingStatus } from "../Types&Enums/Enums";
 import Tag from "./Tag";
 import User from "./User";
 import Bid from "./Bid";
+import Image from "./Image";
 
 //Each listing can have multiple category tags, and bids under it.
 //category tags will have many to many relation with Listing.
 //Listing has one to many relation with bids.
 //User has one to many relation with listings
 
-interface ListingAttributes{
+export interface ListingAttributes{
     id: number;
     user_id: number;
     title: string;
@@ -21,9 +22,10 @@ interface ListingAttributes{
     exchange_items: string;
     price: number;
     status: listingStatus;
+    imageURLs?: string[];
 }
 
-interface ListingCreationAttributes extends Optional<ListingAttributes, "id"|"status">{};
+export interface ListingCreationAttributes extends Optional<ListingAttributes, "id"|"status">{};
 
 class Listing extends Model<ListingAttributes, ListingCreationAttributes> implements ListingAttributes{
     id!: number;
@@ -42,6 +44,7 @@ class Listing extends Model<ListingAttributes, ListingCreationAttributes> implem
     public removeTags!: BelongsToManyRemoveAssociationsMixin<Tag, number>;
 
     public getBids!: HasManyGetAssociationsMixin<Bid>;
+    public getImages!: HasManyGetAssociationsMixin<Image>;
 
     static initModel(sequelize: Sequelize)
     {

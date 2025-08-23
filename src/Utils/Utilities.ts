@@ -15,4 +15,11 @@ export function safeToJson(data: any): any {
 
     return data;
 }
-  
+
+export function isCommentArray(data: any[]): data is Comments[] {
+    return Array.isArray(data) && data.every((item) => 'comment' in item);
+}
+
+export function isTagArray(data: any[]): data is Tag[] {
+    return Array.isArray(data) && data.every((item) => !('comment' in item) && !('progress' in item) && !('project_id' in item && 'priority' in item));
+}

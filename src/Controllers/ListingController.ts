@@ -5,9 +5,8 @@ class ListingController{
     createListing = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const listingService = new ListingService();
-            const { title, description, location, exchange_items, price } = req.body;
 
-            const response = await listingService.createListing(req.user, title, description, location, exchange_items, price);
+            const response = await listingService.createListing(req.user, req.body);
             
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;
@@ -22,9 +21,8 @@ class ListingController{
     updateListing = async (req: Request, res: Response, next: NextFunction) => {
         try{
             const listingService = new ListingService();
-            const { id, title, description, location, exchange_items, price, status} = req.body;
 
-            const response = await listingService.updateListing(req.user, {id, title, description, location, exchange_items, price, status});
+            const response = await listingService.updateListing(req.user, req.body);
             
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;
@@ -52,13 +50,29 @@ class ListingController{
         }
     }
 
+    deleteListingImages = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const listingService = new ListingService();
+            const { listing_id, imageIds } = req.body;
+
+            const response = await listingService.deleteListingImages(req.user, listing_id, imageIds);
+
+            res.status((response.status === "success") ? 200 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
     getListingDetail = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const listingService = new ListingService();
             const id = parseInt(req.query.id as string);
 
             const response = await listingService.getListingDetail(id);
-
+            console.log(response.data);
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;
         }

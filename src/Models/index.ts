@@ -8,6 +8,7 @@ import Tag from "./Tag";
 import Rating from "./Rating";
 import Transaction from "./Transaction";
 import ListingTags from "./ListingTags";
+import Image from "./Image";
 
 User.initModel(sequelize);
 Listing.initModel(sequelize);
@@ -17,6 +18,11 @@ Tag.initModel(sequelize);
 Rating.initModel(sequelize);
 Transaction.initModel(sequelize);
 ListingTags.initModel(sequelize);
+Image.initModel(sequelize);
+
+//IMAGE
+//User has one to one relation with Image (profile picture).
+//Listing has one to many relation with Images.
 
 //USER
 //has one to many relation with listings.
@@ -38,9 +44,15 @@ ListingTags.initModel(sequelize);
 //one to one relation with a transaction.
 
 //RATING
+//has many to one relation with users.
 
 //TRANSACTION
 //one to one relation with trade.
+//D
+//Image relationships
+User.hasOne(Image, {foreignKey: "user_id", as: "profileImage", scope: {isUserImage: true}});
+Image.belongsTo(User, {foreignKey: "user_id", as: "user"});
+
 //D
 User.hasMany(Listing, {foreignKey: "user_id", as: "listings"});
 Listing.belongsTo(User, {foreignKey: "user_id", as:"user"});
@@ -72,10 +84,13 @@ Tag.belongsToMany(Listing, {through: ListingTags, foreignKey: "tag_id", otherKey
 Listing.hasOne(Trade, {foreignKey: "listing_id", as: "trade"});
 Trade.belongsTo(Listing, {foreignKey: "listing_id", as: "listing"});
 
+Listing.hasMany(Image, {foreignKey: "listing_id", as: "images", scope: {isListingImage: true}});
+Image.belongsTo(Listing, {foreignKey: "listing_id", as: "listing"});
+
 Trade.hasOne(Transaction, {foreignKey: "trade_id", as: "trade"});
 Transaction.belongsTo(Trade, {foreignKey: "trade_id", as: "transaction"});
 
-export {sequelize, User, Listing, Bid, Trade, Tag, Rating, Transaction, ListingTags};
+export {sequelize, User, Listing, Bid, Trade, Tag, Rating, Transaction, ListingTags, Image};
 
 
 

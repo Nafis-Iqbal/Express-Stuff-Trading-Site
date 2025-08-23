@@ -10,6 +10,7 @@ const listingController = new ListingController();
 router.post("/create", ListingValidators.listingCreateValidation, checkValidation, listingController.createListing);
 router.put("/update", ListingValidators.listingUpdateValidation, checkValidation, listingController.updateListing);
 router.delete("/delete", CommonValidators.idValidation("id"), checkValidation, listingController.deleteListing);
+router.delete("/delete_image", ListingValidators.deleteImagesValidation, checkValidation, listingController.deleteListingImages);
 router.get("/detail", CommonValidators.idValidation("id"), checkValidation, listingController.getListingDetail);
 
 router.put("/add_tags", CommonValidators.idValidation("id"), ListingValidators.tagArrayValidation("tag_list"), checkValidation, listingController.addListingTags);

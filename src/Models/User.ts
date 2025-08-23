@@ -1,9 +1,10 @@
 import { Model, DataTypes, Optional, Sequelize } from "sequelize";
-import { HasManyGetAssociationsMixin, HasManyAddAssociationMixin, HasManyAddAssociationsMixin} from "sequelize";
+import { HasManyGetAssociationsMixin, HasManyAddAssociationMixin, HasManyAddAssociationsMixin, HasOneGetAssociationMixin} from "sequelize";
 
 import Listing from "./Listing";
 import Bid from "./Bid";
 import Trade from "./Trade";
+import Image from "./Image";
 
 interface UserAttributes {
     id: number;
@@ -37,6 +38,7 @@ class User extends Model<UserAttributes,UserCreationAttributes> implements UserA
     public getListings!: HasManyGetAssociationsMixin<Listing>;
     public getBids!: HasManyGetAssociationsMixin<Bid>;
     public getTrades!: HasManyGetAssociationsMixin<Trade>;
+    public getProfileImage!: HasOneGetAssociationMixin<Image>;
 
     static initModel(sequelize: Sequelize)
     {

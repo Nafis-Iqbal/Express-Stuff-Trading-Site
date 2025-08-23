@@ -1,4 +1,5 @@
-import { sequelize, User, Listing, Bid } from "../Models";
+import { sequelize, User, Listing, Bid, Image } from "../Models";
+import { ListingCreationAttributes } from "../Models/Listing";
 
 import { safeToJson } from "../Utils/Utilities";
 import { Sequelize, Op } from "sequelize";
@@ -181,9 +182,9 @@ export class ListingRepository {
     }));
   }
 
-  async createListing(user_id: number, title: string, description: string, location: string, exchange_items:string, price: number)
+  async createListing(listingData: ListingCreationAttributes)
   {
-    return await Listing.create({ user_id, title, description, location, exchange_items, price });
+    return await Listing.create({ ...listingData });
   }
 
   async updateListing(id: number, newListingData: Partial<Listing>)
@@ -225,6 +226,48 @@ export class ListingRepository {
       }
     }
     else return false;
+  }
+
+  async deleteListingImages(listing_id: number, imageIds: number[])
+  {
+    try {
+      // Verify that the images belong to the listing and are listing images
+      const imagesToDelete = await Image.findAll({
+        where: {
+          id: imageIds,
+          listing_id: listing_id,
+          isListingImage: true
+        }
+      });
+
+      const foundImageIds = imagesToDelete.map(img => img.id);
+      const notFoundIds = imageIds.filter(id => !foundImageIds.includes(id));
+
+      // Delete the found images
+      const deletedRows = await Image.destroy({
+        where: {
+          id: foundImageIds,
+          listing_id: listing_id,
+          isListingImage: true
+        }
+      });
+
+      return {
+        success: true,
+        deletedCount: deletedRows,
+        notFoundIds: notFoundIds,
+        message: `Deleted ${deletedRows} image(s). ${notFoundIds.length > 0 ? `Images not found: ${notFoundIds.join(', ')}` : ''}`
+      };
+    }
+    catch(error) {
+      console.error("Error deleting listing images:", error);
+      return {
+        success: false,
+        deletedCount: 0,
+        notFoundIds: imageIds,
+        message: "Error occurred while deleting images."
+      };
+    }
   }
 
   async deleteListing(id: number)

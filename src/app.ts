@@ -1,3 +1,7 @@
+// Load environment variables FIRST
+import dotenv from "dotenv";
+dotenv.config();
+
 process.on("uncaughtException", (err) => {
   console.error("🔥 Uncaught Exception:", err);
   process.exit(1);
@@ -8,28 +12,28 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
-import redis from './Config/redis';
 
 import router from "./Routes";
 import {errorHandler} from "./Middlewares/CustomMiddlewares";
 
 import {sequelize} from "./Models";
 
-import global from "./Types&Enums/express";
-import global1 from "./Types&Enums/CommonTypes";
-
 const app = express();
-dotenv.config();
 
-// // CORS
+console.log("CORS Origins:", process.env.CORS_ALLOWED_ORIGIN_LOCAL, process.env.CORS_ALLOWED_ORIGIN_REMOTE);
+
+// CORS Configuration
 const corsOptions = {
-  origin: [process.env.CORS_ALLOWED_ORIGIN_LOCAL ?? "*", process.env.CORS_ALLOWED_ORIGIN_REMOTE ?? "*"], // Allow only these origins
+  origin: [
+    process.env.CORS_ALLOWED_ORIGIN_LOCAL?.replace(/\/$/, '') || "http://localhost:3000", 
+    process.env.CORS_ALLOWED_ORIGIN_REMOTE || "https://react-stuff-trading-site.vercel.app"
+  ], // Remove trailing slashes
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-  credentials: true, // Allow cookies & credentials (use with `origin` set)
+  credentials: true, // Allow cookies & credentials
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
 

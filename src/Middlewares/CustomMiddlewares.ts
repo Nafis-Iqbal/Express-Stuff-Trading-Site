@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import { ValidationError } from "sequelize";
 import  jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import Redis from "ioredis";
+// Note: Type imports are handled by tsconfig.json, no need to import .d.ts files at runtime
 //const redisClient = new Redis();
 
 // Middleware to check for validation errors
@@ -42,7 +43,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     }
     catch(error)
     {
-        res.status(403).json({ 
+        res.status(401).json({ 
             status: "Failed.",
             error: "Forbidden. Invalid token." 
         });

@@ -1,8 +1,8 @@
-import Trade from "../Models/Trade";
-import { Listing, User } from "../Models";
+import { Listing, User, Trade } from "../Models";
 import { Op, Sequelize } from "sequelize";
 
 import { safeToJson } from "../Utils/Utilities";
+import { listingStatus } from "../Types&Enums/Enums";
 
 export class TradeRepository{
     async findAllTrades()
@@ -82,7 +82,24 @@ export class TradeRepository{
 
     async createTrade(listing_id: number, buyer_id: number, seller_id: number, amount: number)
     {
-        return safeToJson(await Trade.create({ listing_id, buyer_id, seller_id, amount }));
+        const [affectedRows] = await Listing.update(
+            {
+                status: listingStatus.sold
+            },
+            {
+                where: {
+                    id: listing_id
+                }
+            }
+        )
+
+        if(affectedRows){
+            return safeToJson(await Trade.create({ listing_id, buyer_id, seller_id, amount }));
+        }
+        else {
+            console.log("Listing not found or already sold");
+            return false;
+        }
     }
 
     async updateTrade(id: number, newTradeData: Partial<Trade>)
