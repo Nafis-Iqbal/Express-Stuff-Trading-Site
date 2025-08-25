@@ -6,6 +6,7 @@ export enum role{
 
 export enum listingStatus{
     available = "available",
+    pending = "pending",
     sold = "sold",
     cancelled = "cancelled"
 }

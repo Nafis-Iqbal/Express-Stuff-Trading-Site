@@ -3,6 +3,7 @@ import { validationResult } from "express-validator";
 import { ValidationError } from "sequelize";
 import  jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import Redis from "ioredis";
+import { role } from "../Types&Enums/Enums";
 // Note: Type imports are handled by tsconfig.json, no need to import .d.ts files at runtime
 //const redisClient = new Redis();
 
@@ -35,7 +36,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     try{
         const decoded = jwt.verify(token ?? "", secretKey);
         if (decoded && typeof decoded !== "string") {
-            const userData = decoded as { id: number; email: string };
+            const userData = decoded as { id: number; email: string; role: role };
             req.user = userData;
         }
         
@@ -49,6 +50,27 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
         });
         return;
     }
+}
+
+export const checkAdminRole = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+        res.status(401).json({ 
+            status: "failed",
+            error: "Authentication required." 
+        });
+        return;
+    }
+
+    // Check if user has admin role from the JWT token
+    if (req.user.role !== role.admin) {
+        res.status(200).json({ 
+            status: "failed",
+            error: "Access denied. Admin role required." 
+        });
+        return;
+    }
+
+    next();
 }
 
 // Global error handler middleware

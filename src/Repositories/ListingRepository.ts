@@ -34,7 +34,9 @@ export class ListingRepository {
         attributes: [],
       },
       where: {
-        status: 'available'
+        status: {
+          [Op.in]: ['available', 'pending']
+        }  
       },
       group: ["Listing.id"]
     }));
@@ -80,7 +82,7 @@ export class ListingRepository {
   }
 
   async findDetailById(id: number) {
-    return safeToJson(await Listing.findAll({
+    return safeToJson(await Listing.findOne({
       attributes: {
         include: [
           [Sequelize.fn("COUNT", Sequelize.col("bids.id")), "bidsCount"]

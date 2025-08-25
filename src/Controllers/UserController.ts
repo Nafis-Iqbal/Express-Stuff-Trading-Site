@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcryptjs';
 
 import { UserService } from "../Services/UserService"; 
-
-//import Redis from "ioredis";
-//const redisClient = new Redis();
 
 class UserController{
     createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -44,9 +40,9 @@ class UserController{
     updateUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userService = new UserService();
-            const { id, user_name, role, bio, profile_picture, rating, credits } = req.body;
+            const { id, user_name, bio} = req.body;
 
-            const response = await userService.updateUser({id, user_name, role, bio, profile_picture, rating, credits});
+            const response = await userService.updateUser({id, user_name, bio});
 
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;
@@ -111,6 +107,22 @@ class UserController{
             const response = await userService.getAllUsers();
 
             res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
+
+    updateUserRole = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userService = new UserService();
+            const { user_id, role } = req.body;
+
+            const response = await userService.updateUserRole(req.user, user_id, role);
+
+            res.status((response.status === "success") ? 200 : 400).json(response);
             return;
         }
         catch (error) {

@@ -91,6 +91,7 @@ declare global{
     interface Auth{
         email: string;
         id: number; 
+        role: role;
     }
 }
 

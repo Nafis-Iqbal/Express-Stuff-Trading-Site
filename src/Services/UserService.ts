@@ -27,7 +27,7 @@ export class UserService{
         const newUser = await this.userRepository.createUser(user_name, email, hashedPassword);
         
         const token = jwt.sign(
-            { id: newUser.id, email: newUser.email }, // Payload
+            { id: newUser.id, email: newUser.email, role: newUser.role }, // Payload includes role
             process.env.JWT_SECRET_KEY as string,  // Secret key
             { expiresIn: '2h' }                // Token expiration time
         );
@@ -58,7 +58,7 @@ export class UserService{
 
             if(passwordMatch){
                 const token = jwt.sign(
-                    { id: user.id, email: user.email }, // Payload
+                    { id: user.id, email: user.email, role: user.role }, // Payload includes role
                     process.env.JWT_SECRET_KEY as string,  // Secret key
                     { expiresIn: '2h' }                // Token expiration time
                 );
@@ -136,7 +136,7 @@ export class UserService{
         }
     }
 
-    async updateUser(newUserData: {id: number, user_name: string, role: role, bio: string, profile_picture: string, rating: number, credits: number})
+    async updateUser(newUserData: {id: number, user_name: string, bio: string})
     {
         if(newUserData.id){
             const updateStatus = await this.userRepository.updateUser(newUserData.id, newUserData);
@@ -196,6 +196,79 @@ export class UserService{
                 message: "Failed to fetch users data.",
                 status: "failed",
                 data: []
+            }
+        }
+    }
+
+    async updateUserRole(adminData: Auth | undefined, targetUserId: number, newRole: role)
+    {
+        if(!adminData){
+            return {
+                message: "Error in authenticated user data. Check authentication process.",
+                status: "failed"
+            }
+        }
+
+        // Verify the admin user exists and has admin role
+        const adminUser = await this.userRepository.findById(adminData.id);
+        if(!adminUser || adminUser.role !== role.admin){
+            return {
+                message: "Access denied. Admin role required.",
+                status: "failed"
+            }
+        }
+
+        // Verify target user exists
+        const targetUser = await this.userRepository.findById(targetUserId);
+        if(!targetUser){
+            return {
+                message: "Target user not found.",
+                status: "failed"
+            }
+        }
+
+        // Validate the new role
+        if(!Object.values(role).includes(newRole)){
+            return {
+                message: "Invalid role specified. Valid roles are: user, manager, admin.",
+                status: "failed"
+            }
+        }
+
+        // Prevent self-role modification
+        if(adminData.id === targetUserId){
+            return {
+                message: "Cannot modify your own role.",
+                status: "failed"
+            }
+        }
+
+        try {
+            const updateStatus = await this.userRepository.updateUser(targetUserId, { role: newRole });
+
+            if(updateStatus){
+                return {
+                    message: `User role updated successfully to ${newRole}.`,
+                    status: "success",
+                    data: {
+                        userId: targetUserId,
+                        newRole: newRole,
+                        updatedBy: adminData.id
+                    }
+                }
+            }
+            else{
+                return {
+                    message: "Failed to update user role.",
+                    status: "failed"
+                }
+            }
+        }
+        catch(error){
+            console.error("Error updating user role:", error);
+            return {
+                message: "Error occurred while updating user role.",
+                status: "failed"
             }
         }
     }

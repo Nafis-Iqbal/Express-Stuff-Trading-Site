@@ -28,3 +28,10 @@ export const userDataValidation = [
     body("rating").optional({ checkFalsy: true }).isNumeric().withMessage("Rating must be a number"),
     body("credits").optional({ checkFalsy: true }).isInt().withMessage("Credits must be an integer")
 ];
+
+export const updateUserRoleValidation = [
+    body("user_id").exists().withMessage("User ID is required.")
+        .isInt().withMessage("User ID must be an integer."),
+    body("role").exists().withMessage("Role is required.")
+        .isIn(Object.values(role)).withMessage("Role must be one of: user, manager, admin")
+];

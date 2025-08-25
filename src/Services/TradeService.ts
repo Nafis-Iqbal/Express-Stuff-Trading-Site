@@ -47,7 +47,7 @@ export class TradeService{
         }
     }
 
-    async updateTrade(userData: Auth | undefined, newTradeData: {id: number, amount: number, status: tradeStatus})
+    async updateTrade(userData: Auth | undefined, newTradeData: {id: number, status: tradeStatus})
     {
         if(!userData){
             return {

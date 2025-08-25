@@ -8,11 +8,10 @@ export const ratingCreateValidation = [
 		.isInt({ min: 1 }).withMessage("Listing ID must be a positive integer."),
 	body("trade_id")
 		.isInt({ min: 1 }).withMessage("Trade ID must be a positive integer."),
-	body("rating_giver_id")
-		.isInt({ min: 1 }).withMessage("Rating giver ID must be a positive integer."),
 	body("rating_taker_id")
 		.isInt({ min: 1 }).withMessage("Rating taker ID must be a positive integer."),
 	body("comment")
+		.optional({ checkFalsy: true })
 		.isString().withMessage("Comment must be a string.")
 		.isLength({ max: 500 }).withMessage("Comment must be less than 500 characters."),
 ];

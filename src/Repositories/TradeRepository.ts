@@ -84,7 +84,7 @@ export class TradeRepository{
     {
         const [affectedRows] = await Listing.update(
             {
-                status: listingStatus.sold
+                status: listingStatus.pending
             },
             {
                 where: {
@@ -104,6 +104,14 @@ export class TradeRepository{
 
     async updateTrade(id: number, newTradeData: Partial<Trade>)
     {
+        if(newTradeData.status === 'completed'){
+            const listing = await Listing.findByPk(newTradeData.listing_id);
+
+            if(listing){
+                await listing.update({ status: listingStatus.sold });
+            }
+        }
+        
         return safeToJson(await Trade.update(newTradeData, {
             where: {id}
         }));

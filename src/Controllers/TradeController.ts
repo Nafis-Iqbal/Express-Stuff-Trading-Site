@@ -21,9 +21,9 @@ class TradeController{
     updateTrade = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const tradeService = new TradeService();
-            const { id, amount, status } = req.body;
+            const { id, status } = req.body;
 
-            const response = await tradeService.updateTrade(req.user, {id, amount, status});
+            const response = await tradeService.updateTrade(req.user, {id, status});
 
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;

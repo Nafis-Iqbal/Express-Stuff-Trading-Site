@@ -2,8 +2,7 @@ import { Router } from "express";
 import UserController from "../Controllers/UserController";
 
 import { CommonValidators, UserValidators } from "../Validators";
-import {checkValidation} from "../Middlewares/CustomMiddlewares";
-import { authenticateToken } from "../Middlewares/CustomMiddlewares";
+import {checkValidation, authenticateToken, checkAdminRole} from "../Middlewares/CustomMiddlewares";
 
 const router = Router();
 const userController = new UserController(); 
@@ -19,5 +18,8 @@ router.get("/own_detail", authenticateToken, userController.getOwnUserDetail);
 router.get("/detail", authenticateToken, CommonValidators.idValidation("id"), checkValidation, userController.getUserDetail);
 
 router.get("/index", authenticateToken, userController.getAllUsers);
+
+// Admin-only route for updating user roles
+router.put("/update/admin-role", authenticateToken, checkAdminRole, UserValidators.updateUserRoleValidation, checkValidation, userController.updateUserRole);
 
 export default router;

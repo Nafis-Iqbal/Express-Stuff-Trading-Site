@@ -1,9 +1,9 @@
-import { RatingRepository } from "../Repositories/RatingRepository";
-import { ListingRepository } from "../Repositories/ListingRepository";
+import { UserRepository, RatingRepository } from "../Repositories";
 import { TradeService } from "./TradeService";
 
 export class RatingService{
     private ratingRepository = new RatingRepository();
+    private userRepository = new UserRepository();
 
     private tradeService = new TradeService();
 
@@ -37,6 +37,11 @@ export class RatingService{
             }
             else{
                 const newRating = await this.ratingRepository.createRating(listing_id, trade_id, userData.id, rating_taker_id, rating, comment);
+
+                const sellerRatings = await this.ratingRepository.findUserAcceptedRatings(rating_taker_id);
+                const averageRating = sellerRatings.reduce((acc: number, rating: Rating) => acc + rating.rating, 0) / sellerRatings.length;
+
+                await this.userRepository.updateUser(rating_taker_id, { rating: averageRating });
 
                 if(newRating){
                     return {

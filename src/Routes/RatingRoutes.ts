@@ -7,7 +7,7 @@ import {checkValidation} from "../Middlewares/CustomMiddlewares";
 const router = Router();
 const ratingController = new RatingController();
 
-router.post("/create", checkValidation, ratingController.createRating);
+router.post("/create", RatingValidators.ratingCreateValidation, checkValidation, ratingController.createRating);
 router.put("/update", checkValidation, ratingController.updateRating);
 router.get("/index", ratingController.getAllRatings);
 router.get("/detail", ratingController.getRatingDetail);
