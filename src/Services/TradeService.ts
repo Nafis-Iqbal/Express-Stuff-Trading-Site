@@ -250,6 +250,35 @@ export class TradeService{
         }
     }
 
+    async getUserInteractionHistory(userData: Auth | undefined, other_user_id: number)
+    {
+        if(!userData){
+            return {
+                message: "Error in authenticated user data. Check authentication process.",
+                status: "failed",
+                data: []
+            }
+        }
+        else{
+            const tradesBetweenUsers = await this.tradeRepository.findTradesBetweenUsers(userData.id, other_user_id);
+
+            if(tradesBetweenUsers){
+                return {
+                    message: "User interaction history retrieved successfully.",
+                    status: "success",
+                    data: tradesBetweenUsers
+                }
+            }
+            else{
+                return {
+                    message: "Failed to retrieve interaction history.",
+                    status: "failed",
+                    data: []
+                }
+            }
+        }
+    }
+
     async verifyTradeOwnership(trade_id: number, user_id: number)
     {
         const tradeUser = await this.tradeRepository.findTradeSellerUserByTradeId(trade_id);

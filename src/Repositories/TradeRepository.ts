@@ -63,6 +63,42 @@ export class TradeRepository{
         }));
     }
 
+    async findTradesBetweenUsers(user_id_1: number, user_id_2: number)
+    {
+        return safeToJson(await Trade.findAll({
+            attributes: {
+                include: [
+                    [Sequelize.col("listing.title"), "listing_title"],
+                    [Sequelize.col("buyerUser.user_name"), "buyer_name"],
+                    [Sequelize.col("sellerUser.user_name"), "seller_name"]
+                ]
+            },
+            include: [
+                {
+                    model: Listing,
+                    as: "listing",
+                    attributes: ['title']
+                },
+                {
+                    model: User,
+                    as: "buyerUser",
+                    attributes: ['user_name']
+                },
+                {
+                    model: User,
+                    as: "sellerUser",
+                    attributes: ['user_name']
+                }
+            ],
+            where: {
+                [Op.or]: [
+                    { buyer_id: user_id_1, seller_id: user_id_2 },
+                    { buyer_id: user_id_2, seller_id: user_id_1 }
+                ]
+            }
+        }));
+    }
+
     async findTradeByListingId(listing_id: number)
     {
         return safeToJson(await Trade.findOne({

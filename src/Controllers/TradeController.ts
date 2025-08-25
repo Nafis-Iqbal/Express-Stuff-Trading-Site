@@ -127,6 +127,22 @@ class TradeController{
             return;
         }
     }
+
+    getUserInteractionHistory = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const tradeService = new TradeService();
+            const user_id = parseInt(req.query.user_id as string);
+
+            const response = await tradeService.getUserInteractionHistory(req.user, user_id);
+
+            res.status((response.status === "success") ? 201 : 400).json(response);
+            return;
+        }
+        catch (error) {
+            next(error);
+            return;
+        }
+    }
 }
 
 export default TradeController;

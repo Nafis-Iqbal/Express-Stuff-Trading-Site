@@ -16,5 +16,6 @@ router.get("/index", tradeController.getAllTrades);
 router.get("/user_index", tradeController.getUserTrades);
 router.get("/user_index_views", tradeController.getUserTradeViews);
 router.get("/user_owned_index", tradeController.getUserOwnedTrades);
+router.get("/user_interaction_history", tradeController.getUserInteractionHistory);
 
 export default router;
