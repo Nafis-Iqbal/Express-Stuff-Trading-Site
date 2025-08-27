@@ -34,7 +34,7 @@ export const listingUpdateValidation = [
         .isLength({min:2, max:30}).withMessage("Listing description must be within range of 2-30"),
     body("exchange_items").optional({ checkFalsy: true }).isString().withMessage("Exchange items must be a string")
         .isLength({min:5, max:60}).withMessage("Items description must be within range of 5-60"),
-    body("status").optional({ checkFalsy: true }).isIn(["sold", "available", "cancelled"]).withMessage("Status must be a valid listing Status type"),
+    body("status").optional({ checkFalsy: true }).isIn(["sold", "available", "cancelled", "pending"]).withMessage("Status must be a valid listing Status type"),
     body("imageURLs")
         .optional({ checkFalsy: true })
         .isArray().withMessage("imageURLs must be an array")

@@ -186,14 +186,14 @@ export class ListingRepository {
 
   async createListing(listingData: ListingCreationAttributes)
   {
-    return await Listing.create({ ...listingData });
+    return safeToJson(await Listing.create({ ...listingData }));
   }
 
   async updateListing(id: number, newListingData: Partial<Listing>)
   {
-    return await Listing.update(newListingData, {
+    return safeToJson(await Listing.update(newListingData, {
       where: {id}
-    });
+    }));
   }
 
   async addListingTags(id: number, tag_list: number[])

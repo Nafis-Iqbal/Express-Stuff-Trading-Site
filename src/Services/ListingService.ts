@@ -48,7 +48,7 @@ export class ListingService{
                     message: "New listing created successfully.",
                     status: "success",
                     data: {
-                        listing: newListing,
+                        ...newListing,
                         images: imageResult?.data || []
                     }
                 }
