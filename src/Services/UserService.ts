@@ -136,7 +136,7 @@ export class UserService{
         }
     }
 
-    async updateUser(newUserData: {id: number, user_name: string, bio: string})
+    async updateUser(newUserData: {id: number, user_name: string, bio: string, profile_picture: string})
     {
         if(newUserData.id){
             const updateStatus = await this.userRepository.updateUser(newUserData.id, newUserData);

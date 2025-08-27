@@ -40,9 +40,9 @@ class UserController{
     updateUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userService = new UserService();
-            const { id, user_name, bio} = req.body;
+            const { id, user_name, bio, profile_picture} = req.body;
 
-            const response = await userService.updateUser({id, user_name, bio});
+            const response = await userService.updateUser({id, user_name, bio, profile_picture});
 
             res.status((response.status === "success") ? 201 : 400).json(response);
             return;
