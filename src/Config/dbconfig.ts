@@ -32,12 +32,12 @@ const config: IDBConfig = {
     port: Number(process.env.DB_PORT) || 3306,
   },
   production: {
-    username: process.env.DB_USERNAME || "root",
-    password: process.env.DB_PASSWORD || "prod_password",
-    database: process.env.DB_NAME || "prod_db",
-    host: process.env.DB_HOST || "prod_host",
+    username: process.env.JDB_USERNAME || "root",
+    password: process.env.JDB_PASSWORD || "prod_password",
+    database: process.env.JDB_NAME || "prod_db",
+    host: process.env.JDB_HOST || "prod_host",
     dialect: "mysql",
-    port: Number(process.env.DB_PORT) || 3306,
+    port: Number(process.env.JDB_PORT) || 3306,
   },
 };
 
